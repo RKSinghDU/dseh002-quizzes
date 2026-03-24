@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSEH002 — Instructor Quiz Control</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --cream: #faf7f2;
+  --saffron: #d4601a;
+  --teal: #1a5c52;
+  --green: #1a7a4a;
+  --red: #c0392b;
+  --gold: #b8860b;
+  --border: rgba(26,20,16,0.12);
+  --shadow: 0 4px 24px rgba(26,20,16,0.10);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--ink);
+  color: var(--cream);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.card {
+  background: #241e1a;
+  border: 1px solid rgba(250,247,242,0.1);
+  border-radius: 12px;
+  padding: 2.5rem 2.8rem;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 0.6rem;
+}
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.4rem;
+}
+.sub {
+  font-size: 0.85rem;
+  color: rgba(250,247,242,0.45);
+  margin-bottom: 2rem;
+}
+
+/* STATUS BOX */
+.status-box {
+  background: rgba(250,247,242,0.05);
+  border: 1px solid rgba(250,247,242,0.1);
+  border-radius: 8px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1.8rem;
+}
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.status-row:last-child { margin-bottom: 0; }
+.status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-waiting  { background: rgba(250,247,242,0.2); }
+.dot-active   { background: #72d4a0; box-shadow: 0 0 8px rgba(114,212,160,0.5); animation: pulse 1.5s infinite; }
+.dot-closed   { background: #f08080; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+.status-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(250,247,242,0.4);
+  min-width: 80px;
+}
+.status-val {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* COUNTDOWN */
+.countdown {
+  text-align: center;
+  margin: 1.5rem 0;
+  display: none;
+}
+.countdown.shown { display: block; }
+.countdown-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 3.5rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--saffron);
+  letter-spacing: -0.02em;
+}
+.countdown-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(250,247,242,0.35);
+  margin-top: 0.4rem;
+}
+
+/* BUTTONS */
+.btn-launch {
+  width: 100%;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--saffron);
+  color: #fff;
+  border: none;
+  padding: 1.1rem 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 4px 20px rgba(212,96,26,0.35);
+}
+.btn-launch:hover { background: #b84e14; transform: translateY(-1px); }
+.btn-launch:disabled { background: rgba(250,247,242,0.1); color: rgba(250,247,242,0.3); box-shadow: none; cursor: not-allowed; transform: none; }
+
+.btn-reset {
+  width: 100%;
+  margin-top: 0.8rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  color: rgba(250,247,242,0.35);
+  border: 1px solid rgba(250,247,242,0.12);
+  padding: 0.75rem 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-reset:hover { border-color: var(--red); color: #f08080; }
+
+.msg {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  display: none;
+}
+.msg.shown { display: block; }
+.msg.ok  { background: rgba(72,212,160,0.1); color: #72d4a0; }
+.msg.err { background: rgba(240,128,128,0.1); color: #f08080; }
+
+.quiz-link {
+  margin-top: 1.5rem;
+  padding: 1rem 1.2rem;
+  background: rgba(250,247,242,0.04);
+  border: 1px solid rgba(250,247,242,0.08);
+  border-radius: 6px;
+  display: none;
+}
+.quiz-link.shown { display: block; }
+.quiz-link-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(250,247,242,0.35);
+  margin-bottom: 0.4rem;
+}
+.quiz-link-url {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--saffron);
+  word-break: break-all;
+  line-height: 1.5;
+}
+.sheet-link {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: #72d4a0;
+  text-decoration: none;
+  letter-spacing: 0.08em;
+}
+.sheet-link:hover { text-decoration: underline; }
+
+.note {
+  font-size: 0.78rem;
+  color: rgba(250,247,242,0.3);
+  margin-top: 1.5rem;
+  line-height: 1.6;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(250,247,242,0.07);
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="eyebrow">DSEH002 · Instructor Control Panel</div>
+  <h1>Week 5 Quiz<br>Launch Controller</h1>
+  <div class="sub">University of Delhi · Prof R K Singh</div>
+
+  <div class="status-box">
+    <div class="status-row">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-label">Status</span>
+      <span class="status-val" id="statusText">Checking…</span>
+    </div>
+    <div class="status-row">
+      <div style="width:10px;flex-shrink:0;"></div>
+      <span class="status-label">Closes at</span>
+      <span class="status-val" id="closeText">—</span>
+    </div>
+    <div class="status-row">
+      <div style="width:10px;flex-shrink:0;"></div>
+      <span class="status-label">Duration</span>
+      <span class="status-val">15 minutes</span>
+    </div>
+  </div>
+
+  <div class="countdown" id="countdown">
+    <div class="countdown-num" id="countdownNum">15:00</div>
+    <div class="countdown-lbl">Time remaining for students</div>
+  </div>
+
+  <button class="btn-launch" id="launchBtn" onclick="launchQuiz()">🚀 Launch Quiz Now</button>
+  <button class="btn-reset" id="resetBtn" onclick="resetQuiz()">↺ Reset for New Session</button>
+
+  <div class="msg" id="msg"></div>
+
+  <div class="quiz-link" id="quizLink">
+    <div class="quiz-link-lbl">Student Quiz Link — share this</div>
+    <div class="quiz-link-url" id="quizUrl"></div>
+  </div>
+
+  <div class="note">
+    <strong>How to use:</strong><br>
+    1. Click Launch when class is ready<br>
+    2. Share the student link below with your class<br>
+    3. Quiz auto-closes after 15 minutes<br>
+    4. Click Reset before next session to clear the timer
+  </div>
+</div>
+
+<script>
+// ── REPLACE WITH YOUR APPS SCRIPT URL ──
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdKzg4KDxohvhyYEQOPjoSKo4wS7KgPvioRnlpUill2VI8rZMFGN2ndgT-CwCf_q0FWA/exec";
+const STUDENT_QUIZ_URL = "https://rksinghdu.github.io/dseh002-quizzes/DSEH002_MCQ_Week5_ProcessConsultation_v2.0.html";
+// ───────────────────────────────────────
+
+let countdownInterval = null;
+
+// Check status on load
+window.onload = () => {
+  checkStatus();
+  document.getElementById('quizUrl').textContent = STUDENT_QUIZ_URL;
+  document.getElementById('quizLink').classList.add('shown');
+};
+
+async function checkStatus() {
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=status`);
+    const data = await res.json();
+    applyStatus(data);
+  } catch(e) {
+    setStatusUI('error', 'Cannot reach server', null);
+  }
+}
+
+function applyStatus(data) {
+  if (data.status === 'not_launched') {
+    setStatusUI('waiting', 'Not yet launched', null);
+    document.getElementById('launchBtn').disabled = false;
+  } else if (data.status === 'active') {
+    setStatusUI('active', 'LIVE — accepting submissions', data);
+    document.getElementById('launchBtn').disabled = true;
+    startCountdown(data.remainingSeconds);
+  } else if (data.status === 'closed') {
+    setStatusUI('closed', 'Closed — no more submissions', null);
+    document.getElementById('launchBtn').disabled = true;
+    document.getElementById('countdownNum').textContent = '00:00';
+    document.getElementById('countdown').classList.add('shown');
+  }
+}
+
+function setStatusUI(state, text, data) {
+  const dot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+  const closeText = document.getElementById('closeText');
+
+  dot.className = 'status-dot';
+  if (state === 'active')  dot.classList.add('dot-active');
+  else if (state === 'closed') dot.classList.add('dot-closed');
+  else dot.classList.add('dot-waiting');
+
+  statusText.textContent = text;
+
+  if (data && data.closeTime) {
+    const ct = new Date(data.closeTime);
+    closeText.textContent = ct.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  } else {
+    closeText.textContent = '—';
+  }
+}
+
+function startCountdown(seconds) {
+  document.getElementById('countdown').classList.add('shown');
+  if (countdownInterval) clearInterval(countdownInterval);
+
+  let remaining = seconds;
+  updateCountdownDisplay(remaining);
+
+  countdownInterval = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(countdownInterval);
+      document.getElementById('countdownNum').textContent = '00:00';
+      setStatusUI('closed', 'Closed — no more submissions', null);
+      showMsg('Quiz window has closed. Check your Google Sheet for results.', 'ok');
+      return;
+    }
+    updateCountdownDisplay(remaining);
+  }, 1000);
+}
+
+function updateCountdownDisplay(seconds) {
+  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const s = (seconds % 60).toString().padStart(2, '0');
+  document.getElementById('countdownNum').textContent = `${m}:${s}`;
+}
+
+async function launchQuiz() {
+  const btn = document.getElementById('launchBtn');
+  btn.disabled = true;
+  btn.textContent = 'Launching…';
+
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=launch`);
+    const data = await res.json();
+    if (data.status === 'launched') {
+      showMsg('✓ Quiz launched! 15-minute window is now open.', 'ok');
+      applyStatus({ status: 'active', remainingSeconds: 15 * 60, closeTime: data.closeTime });
+      btn.textContent = 'Quiz is Live';
+    } else {
+      showMsg('Error: ' + (data.message || 'Unknown error'), 'err');
+      btn.disabled = false;
+      btn.textContent = '🚀 Launch Quiz Now';
+    }
+  } catch(e) {
+    showMsg('Could not reach server. Check your internet connection.', 'err');
+    btn.disabled = false;
+    btn.textContent = '🚀 Launch Quiz Now';
+  }
+}
+
+async function resetQuiz() {
+  if (!confirm('Reset the quiz timer? This allows a new session to be launched.')) return;
+  try {
+    // Reset is handled by manually running resetQuiz() in Apps Script
+    // Here we just inform the instructor
+    showMsg('To fully reset: go to Apps Script → Run the resetQuiz() function → come back and refresh this page.', 'ok');
+  } catch(e) {
+    showMsg('Reset failed.', 'err');
+  }
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = `msg shown ${type}`;
+}
+</script>
+</body>
+</html>

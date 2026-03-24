@@ -753,9 +753,155 @@ const questions = [
   }
 ];
 
+// ── CONFIG ─────────────────────────────────────────
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdKzg4KDxohvhyYEQOPjoSKo4wS7KgPvioRnlpUill2VI8rZMFGN2ndgT-CwCf_q0FWA/exec";
+const ATTEMPT_KEY = "dseh002_w5_submitted";
+
 // ── STATE ──────────────────────────────────────────
 let submitted = false;
 let startTime = Date.now();
+let timerInterval = null;
+let quizActive = false;
+
+// ── OVERLAY HELPERS ────────────────────────────────
+function showOverlay(title, message, color) {
+  let ov = document.getElementById('quizOverlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'quizOverlay';
+    ov.style.cssText = `
+      position:fixed;inset:0;z-index:9999;
+      background:rgba(26,20,16,0.96);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'DM Sans',sans-serif;
+      flex-direction:column;gap:1rem;padding:2rem;text-align:center;
+    `;
+    document.body.appendChild(ov);
+  }
+  ov.innerHTML = `
+    <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.16em;
+      text-transform:uppercase;color:${color};margin-bottom:0.5rem;">DSEH002 · Week 5 Quiz</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;
+      color:#faf7f2;line-height:1.2;">${title}</div>
+    <div style="font-size:0.95rem;color:rgba(250,247,242,0.55);max-width:380px;
+      line-height:1.6;">${message}</div>
+  `;
+  ov.style.display = 'flex';
+}
+
+function hideOverlay() {
+  const ov = document.getElementById('quizOverlay');
+  if (ov) ov.style.display = 'none';
+}
+
+// ── TIMER DISPLAY ──────────────────────────────────
+function injectTimerBar() {
+  const bar = document.createElement('div');
+  bar.id = 'timerBar';
+  bar.style.cssText = `
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    background:#1a1410;border-bottom:1px solid rgba(250,247,242,0.1);
+    padding:0.6rem 1.5rem;display:flex;align-items:center;
+    justify-content:space-between;font-family:'DM Mono',monospace;
+  `;
+  bar.innerHTML = `
+    <span style="font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;
+      color:rgba(250,247,242,0.4);">DSEH002 · Week 5 · Time Remaining</span>
+    <span id="timerDisplay" style="font-size:1rem;font-weight:500;color:#d4601a;
+      letter-spacing:0.08em;">15:00</span>
+  `;
+  document.body.insertBefore(bar, document.body.firstChild);
+  document.body.style.paddingTop = '48px';
+}
+
+function startVisualTimer(remainingSeconds) {
+  injectTimerBar();
+  updateTimerDisplay(remainingSeconds);
+  timerInterval = setInterval(() => {
+    remainingSeconds--;
+    updateTimerDisplay(remainingSeconds);
+    if (remainingSeconds <= 60) {
+      document.getElementById('timerDisplay').style.color = '#c0392b';
+    }
+    if (remainingSeconds <= 0) {
+      clearInterval(timerInterval);
+      if (!submitted) {
+        document.getElementById('timerDisplay').textContent = '00:00';
+        autoSubmit();
+      }
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(seconds) {
+  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const s = (seconds % 60).toString().padStart(2, '0');
+  const el = document.getElementById('timerDisplay');
+  if (el) el.textContent = `${m}:${s}`;
+}
+
+function autoSubmit() {
+  if (submitted) return;
+  showOverlay('Time is up!', 'Auto-submitting your answers…', '#d4601a');
+  setTimeout(() => {
+    hideOverlay();
+    submitQuiz(true);
+  }, 1500);
+}
+
+// ── QUIZ STATUS CHECK ──────────────────────────────
+async function checkQuizStatus() {
+  // Check browser lock first
+  if (localStorage.getItem(ATTEMPT_KEY) === 'true') {
+    showOverlay(
+      'Already Submitted',
+      'You have already submitted this quiz. Results have been recorded.',
+      '#1a7a4a'
+    );
+    return false;
+  }
+
+  // Check server status
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=status`);
+    const data = await res.json();
+
+    if (data.status === 'not_launched') {
+      showOverlay(
+        'Quiz Not Yet Open',
+        'Your instructor has not launched the quiz yet. Please wait.',
+        '#b8860b'
+      );
+      // Poll every 10 seconds
+      setTimeout(checkQuizStatus, 10000);
+      return false;
+    }
+
+    if (data.status === 'closed') {
+      showOverlay(
+        'Quiz Closed',
+        'The 15-minute window has ended. Submissions are no longer accepted.',
+        '#c0392b'
+      );
+      return false;
+    }
+
+    if (data.status === 'active') {
+      hideOverlay();
+      quizActive = true;
+      startVisualTimer(data.remainingSeconds);
+      return true;
+    }
+  } catch(e) {
+    // If server unreachable, allow quiz but warn
+    console.warn('Could not check quiz status:', e);
+    hideOverlay();
+    quizActive = true;
+    startVisualTimer(15 * 60);
+    return true;
+  }
+  return false;
+}
 
 // ── RENDER ─────────────────────────────────────────
 function renderQuestions() {
@@ -821,18 +967,24 @@ function calcScore(q) {
 }
 
 // ── SUBMIT ─────────────────────────────────────────
-function submitQuiz() {
+function submitQuiz(isAuto = false) {
   if (submitted) return;
 
   const name = document.getElementById('studentName').value.trim();
-  if (!name) {
+  if (!name && !isAuto) {
     document.getElementById('studentName').focus();
     document.getElementById('studentName').style.borderBottomColor = '#c0392b';
     setTimeout(() => { document.getElementById('studentName').style.borderBottomColor = ''; }, 2000);
     return;
   }
 
+  const finalName = name || 'Unknown';
   submitted = true;
+  if (timerInterval) clearInterval(timerInterval);
+
+  // Set browser lock
+  localStorage.setItem(ATTEMPT_KEY, 'true');
+
   document.getElementById('submitBtn').disabled = true;
   document.getElementById('submitBtn').textContent = 'Submitted ✓';
   document.getElementById('progressFill').style.width = '100%';
@@ -870,7 +1022,6 @@ function submitQuiz() {
       correct: isFullyCorrect
     });
 
-    // Show rationale + score tag
     const rat = document.getElementById(`rat-${q.id}`);
     rat.classList.add('shown');
     const tag = document.createElement('div');
@@ -882,7 +1033,6 @@ function submitQuiz() {
   totalScore = parseFloat(totalScore.toFixed(2));
   const pct = (totalScore / 30) * 100;
 
-  // ── Render score panel ──
   document.getElementById('scoreBig').innerHTML =
     `${totalScore}<span class="denom"> / 30</span>`;
 
@@ -914,14 +1064,12 @@ function submitQuiz() {
   scorePanel.classList.add('shown');
   scorePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // ── Save to Google Sheet ──
   saveToSheet({
-    studentName: name,
-    totalScore: totalScore,
-    maxScore: 30,
+    studentName: finalName,
+    totalScore, maxScore: 30,
     percentage: pct.toFixed(1),
     gradeBand: band,
-    timeTaken: timeTaken,
+    timeTaken,
     questions: questionResults
   });
 }
@@ -929,24 +1077,15 @@ function submitQuiz() {
 // ── GOOGLE SHEET SAVE ──────────────────────────────
 async function saveToSheet(data) {
   const statusEl = document.getElementById('saveStatus');
-
-  if (!SHEET_URL || SHEET_URL === "PASTE_YOUR_APPS_SCRIPT_URL_HERE") {
-    statusEl.className = 'save-status failed';
-    statusEl.textContent = '⚠ Sheet URL not configured — results not saved';
-    return;
-  }
-
   try {
     statusEl.className = 'save-status saving';
     statusEl.textContent = '⟳ Saving your results…';
-
-    await fetch(SHEET_URL, {
+    await fetch(SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     });
-
     statusEl.className = 'save-status saved';
     statusEl.textContent = '✓ Results saved to class record';
   } catch (err) {
@@ -956,7 +1095,9 @@ async function saveToSheet(data) {
 }
 
 // ── INIT ───────────────────────────────────────────
+showOverlay('Loading Quiz…', 'Checking quiz status, please wait.', '#b8860b');
 renderQuestions();
+checkQuizStatus();
 </script>
 </body>
 </html>
