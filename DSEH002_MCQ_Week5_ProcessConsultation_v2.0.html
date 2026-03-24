@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSEH002 — Week 5 MCQ Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --cream: #faf7f2;
+  --parchment: #f0ebe0;
+  --saffron: #d4601a;
+  --saffron-light: #f0a060;
+  --teal: #1a5c52;
+  --teal-light: #2a8a7a;
+  --gold: #b8860b;
+  --gold-light: #e6b84a;
+  --red-err: #c0392b;
+  --green-ok: #1a7a4a;
+  --blue-info: #1a4a7a;
+  --border: rgba(26,20,16,0.12);
+  --shadow: 0 4px 24px rgba(26,20,16,0.10);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 2rem 2rem 1.6rem;
+  position: relative;
+  overflow: hidden;
+}
+.site-header::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 320px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(212,96,26,0.18));
+  pointer-events: none;
+}
+.header-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--saffron-light);
+  margin-bottom: 0.5rem;
+}
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 0.4rem;
+}
+.header-sub {
+  font-size: 0.9rem;
+  color: rgba(250,247,242,0.6);
+  font-weight: 300;
+}
+.header-meta {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+.meta-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(250,247,242,0.08);
+  border: 1px solid rgba(250,247,242,0.16);
+  color: rgba(250,247,242,0.75);
+  padding: 0.28rem 0.75rem;
+  border-radius: 2px;
+}
+
+/* ── NAME SECTION ── */
+.name-section {
+  max-width: 860px;
+  margin: 2rem auto 0;
+  padding: 0 1.5rem;
+}
+.name-field-wrap {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow);
+}
+.name-field-wrap label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(26,20,16,0.5);
+  white-space: nowrap;
+}
+.name-field-wrap input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  padding: 0.3rem 0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.name-field-wrap input:focus { border-color: var(--saffron); }
+.name-field-wrap input::placeholder { color: rgba(26,20,16,0.3); }
+
+/* ── INSTRUCTIONS ── */
+.instructions {
+  max-width: 860px;
+  margin: 1.2rem auto 0;
+  padding: 0 1.5rem;
+}
+.instr-box {
+  background: var(--parchment);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.4rem;
+  font-size: 0.85rem;
+  color: rgba(26,20,16,0.65);
+  line-height: 1.7;
+}
+.instr-box strong { color: var(--teal); }
+
+/* ── PROGRESS ── */
+.progress-section {
+  max-width: 860px;
+  margin: 1.5rem auto 0;
+  padding: 0 1.5rem;
+}
+.progress-bar-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--saffron), var(--gold-light));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(26,20,16,0.35);
+  margin-bottom: 0.4rem;
+}
+
+/* ── QUIZ WRAPPER ── */
+.quiz-wrapper {
+  max-width: 860px;
+  margin: 0 auto 4rem;
+  padding: 0 1.5rem;
+}
+
+/* ── QUESTION CARD ── */
+.question-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1.8rem;
+  margin-top: 1.5rem;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: slideIn 0.3s ease both;
+}
+@keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+.q-header {
+  padding: 1rem 1.4rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+.q-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--cream);
+  background: var(--saffron);
+  padding: 0.22rem 0.6rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  margin-top: 0.1rem;
+  letter-spacing: 0.05em;
+}
+.q-marks {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: rgba(26,20,16,0.45);
+  margin-left: auto;
+  white-space: nowrap;
+  margin-top: 0.1rem;
+}
+.q-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+  flex: 1;
+}
+.q-body { padding: 1rem 1.4rem 1.2rem; }
+.q-hint {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal-light);
+  margin-bottom: 0.75rem;
+}
+
+/* ── OPTIONS ── */
+.options-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.option-item label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.65rem 0.9rem;
+  border-radius: 5px;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  transition: all 0.15s;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.option-item label:hover { border-color: var(--saffron-light); background: var(--parchment); }
+.option-item input[type="checkbox"] { display: none; }
+.option-tick {
+  width: 18px; height: 18px; min-width: 18px;
+  border: 1.5px solid rgba(26,20,16,0.25);
+  border-radius: 3px;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  background: #fff;
+  font-size: 11px;
+  color: #fff;
+}
+.option-item input:checked + .option-tick { background: var(--saffron); border-color: var(--saffron); }
+.option-item input:checked + .option-tick::after { content: '✓'; }
+.option-item input:checked ~ .option-text { color: var(--saffron); font-weight: 500; }
+
+/* Post-submit states */
+.option-item.correct-chosen label  { background: #e8f5ee; border-color: var(--green-ok); }
+.option-item.correct-chosen .option-tick { background: var(--green-ok); border-color: var(--green-ok); }
+.option-item.wrong-chosen label    { background: #fdecea; border-color: var(--red-err); }
+.option-item.wrong-chosen .option-tick { background: var(--red-err); border-color: var(--red-err); }
+.option-item.missed-correct label  { background: #e8f5ee; border-color: var(--green-ok); border-style: dashed; }
+.option-item.missed-correct .option-tick { border-color: var(--green-ok); background: #e8f5ee; color: var(--green-ok); }
+.option-item.missed-correct .option-tick::after { content: '✓'; color: var(--green-ok); }
+
+/* ── RATIONALE ── */
+.rationale-block {
+  display: none;
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  background: #f5f8fe;
+  border-left: 3px solid var(--blue-info);
+  border-radius: 0 5px 5px 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+.rationale-block.shown { display: block; }
+.rationale-block strong {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--blue-info);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.q-score-tag {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  letter-spacing: 0.06em;
+}
+.q-score-tag.pos  { background: #d4edda; color: var(--green-ok); }
+.q-score-tag.neg  { background: #fdecea; color: var(--red-err); }
+.q-score-tag.zero { background: #fff3cd; color: var(--gold); }
+
+/* ── SUBMIT ── */
+.submit-row { text-align: center; margin: 2rem 0; }
+.btn-submit {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--cream);
+  border: none;
+  padding: 1rem 3rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-submit:hover { background: var(--saffron); transform: translateY(-1px); }
+.btn-submit:disabled { background: rgba(26,20,16,0.3); cursor: not-allowed; transform: none; }
+
+/* ── SCORE PANEL ── */
+.score-panel {
+  display: none;
+  background: var(--ink);
+  color: var(--cream);
+  border-radius: 8px;
+  padding: 2rem 2.2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.score-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; right: -40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(212,96,26,0.12);
+}
+.score-panel.shown { display: block; }
+.score-panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+.score-big {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.score-big .denom { font-size: 1.8rem; opacity: 0.55; }
+.score-breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.breakdown-item {
+  background: rgba(250,247,242,0.07);
+  border-radius: 5px;
+  padding: 0.8rem 1rem;
+}
+.breakdown-item .b-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.breakdown-item .b-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(250,247,242,0.5);
+  margin-top: 0.2rem;
+}
+.breakdown-item.green .b-val { color: #72d4a0; }
+.breakdown-item.amber .b-val { color: var(--gold-light); }
+
+.grade-band {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.4rem 1.2rem;
+  border-radius: 3px;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+.band-excellent { background: #1a5c3a; color: #72d4a0; }
+.band-good      { background: #1a4a2a; color: #a0d4b8; }
+.band-average   { background: #4a3a0a; color: var(--gold-light); }
+.band-needs-work{ background: #5a1a1a; color: #f08080; }
+
+.save-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 3px;
+  display: inline-block;
+}
+.save-status.saving  { background: rgba(250,247,242,0.1); color: rgba(250,247,242,0.6); }
+.save-status.saved   { background: rgba(72,212,160,0.15); color: #72d4a0; }
+.save-status.failed  { background: rgba(240,128,128,0.15); color: #f08080; }
+
+.score-formula {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: rgba(250,247,242,0.35);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(250,247,242,0.1);
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  font-size: 0.78rem;
+  color: rgba(26,20,16,0.4);
+  border-top: 1px solid var(--border);
+  line-height: 1.6;
+  font-family: 'DM Mono', monospace;
+}
+
+@media (max-width: 600px) {
+  .header-title { font-size: 1.5rem; }
+  .q-text { font-size: 0.97rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-eyebrow">DSEH002 · Assessment · Week 5</div>
+  <div class="header-title">Process Consultation,<br>OCTAPACE & Human Interventions</div>
+  <div class="header-sub">University of Delhi, Department of Commerce · Prof R K Singh</div>
+  <div class="header-meta">
+    <span class="meta-chip">15 Questions</span>
+    <span class="meta-chip">30 Marks Total</span>
+    <span class="meta-chip">Multiple Correct Answers</span>
+    <span class="meta-chip">Normalised Scoring</span>
+  </div>
+</header>
+
+<div class="name-section">
+  <div class="name-field-wrap">
+    <label for="studentName">Your Name</label>
+    <input type="text" id="studentName" placeholder="Enter your full name before submitting…" autocomplete="off">
+  </div>
+</div>
+
+<div class="instructions">
+  <div class="instr-box">
+    <strong>Scoring:</strong> Each question has 7 options with multiple correct answers (2 marks each).
+    Per correct option chosen: <strong>+k</strong>. Per wrong option chosen: <strong>−k</strong>. Per correct option missed: <strong>−k</strong>.
+    Where k = 2 ÷ (number of correct options). Minimum per question = 0. Select all answers you believe are correct.
+    Results are recorded automatically on submission.
+  </div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-label">
+    <span id="progressText">0 of 15 answered</span>
+    <span id="progressPct">0%</span>
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="quiz-wrapper">
+  <div class="score-panel" id="scorePanel">
+    <div class="score-panel-title">Your Results</div>
+    <div class="score-big" id="scoreBig">—<span class="denom"> / 30</span></div>
+    <div class="score-breakdown" id="scoreBreakdown"></div>
+    <div class="grade-band" id="gradeBand"></div>
+    <div class="save-status saving" id="saveStatus">⟳ Saving your results…</div>
+    <div class="score-formula">
+      Scoring: per question = Σ[+k correct chosen] + Σ[−k wrong chosen] + Σ[−k correct missed] · min = 0
+    </div>
+  </div>
+
+  <div id="questionsContainer"></div>
+
+  <div class="submit-row">
+    <button class="btn-submit" id="submitBtn" onclick="submitQuiz()">Submit & See Results</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  For private circulation to the DSEH002 – Organizational Development and Change Management<br>
+  class of Professor R K Singh, Department of Commerce, University of Delhi.<br>
+  Unauthorised distribution strictly prohibited.
+</footer>
+
+<script>
+// ── REPLACE THIS WITH YOUR APPS SCRIPT WEB APP URL ──────────
+const SHEET_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+// ─────────────────────────────────────────────────────────────
+
+const questions = [
+  {
+    id: 1,
+    text: "Schein argues that the Expert model of consultation is often the DEFAULT choice by both clients and consultants. Which of the following best explain WHY organisations are drawn to the Expert model even when it is inappropriate?",
+    hint: "Think about organisational psychology, not just preference.",
+    options: [
+      { id:"A", text:"Clients prefer someone who appears authoritative — it reduces their anxiety about uncertainty." },
+      { id:"B", text:"Expert consultants typically charge lower fees than process consultants." },
+      { id:"C", text:"Organisations have a cultural bias toward hiring 'solvers' rather than 'enablers'." },
+      { id:"D", text:"The Doctor-Patient model is actually more effective than the Expert model in Indian organisations." },
+      { id:"E", text:"The Expert model offers a clear contractual deliverable, making accountability easier to define." },
+      { id:"F", text:"Expert models succeed in all situations where the problem is clearly technical in nature." },
+      { id:"G", text:"The Expert model externalises responsibility, protecting internal managers from blame." }
+    ],
+    correct: ["A","C","E","G"],
+    rationale: "Schein's critique centres on psychology and culture: clients seek certainty (A), organisations are solution-oriented by default (C), the Expert model produces a concrete deliverable (E), and it diffuses accountability (G). Fee levels (B) have no bearing on Schein's typology. The Doctor-Patient model is not superior in Indian contexts as a general rule (D). The Expert model often fails even in technical problems because problem definition itself requires PC skills (F)."
+  },
+  {
+    id: 2,
+    text: "Argyris's three conditions for effective OD intervention are: Valid Information, Free Choice, and Internal Commitment. A consultant is working with Bharat Textiles Manufacturing, where management has already decided on a downsizing plan before the diagnostic is complete. Which conditions are VIOLATED in this scenario?",
+    hint: "Trace each Argyris condition against the scenario facts.",
+    options: [
+      { id:"A", text:"Valid Information — because workers will not share honest data when they fear the outcome is predetermined." },
+      { id:"B", text:"Free Choice — because management's predetermined decision eliminates genuine alternatives for stakeholders." },
+      { id:"C", text:"Internal Commitment — because employees asked to implement a plan they had no voice in rarely sustain effort." },
+      { id:"D", text:"Valid Information — because management will selectively interpret diagnostic data to confirm the existing decision." },
+      { id:"E", text:"None — Argyris's conditions apply only to team-building interventions, not structural changes." },
+      { id:"F", text:"Internal Commitment — because the consultant's own commitment to the process is compromised." },
+      { id:"G", text:"Free Choice — but only if employees are aware of the predetermined plan." }
+    ],
+    correct: ["A","B","C","D"],
+    rationale: "All three Argyris conditions are compromised. Valid Information is threatened both by worker self-censorship under fear (A) and management's confirmation bias (D). Free Choice is violated because the outcome is predetermined (B). Internal Commitment cannot exist when people implement plans they had no agency in creating (C). Argyris's conditions apply to ALL OD interventions, not only team-building (E is false). The consultant's personal commitment (F) is not an Argyris condition. Free Choice violation is independent of employee awareness (G is too narrow)."
+  },
+  {
+    id: 3,
+    text: "In the Tower Exercise, the designated PC Observer is instructed NOT to participate in building. This design choice embeds which of the following pedagogical and theoretical principles?",
+    hint: "Why is non-participation an asset, not a limitation?",
+    options: [
+      { id:"A", text:"The Observer practises Schein's 'process focus' — attending to HOW the group works, not WHAT it produces." },
+      { id:"B", text:"Non-participation makes the observer neutral, eliminating all risk of observer bias." },
+      { id:"C", text:"The Observer role mirrors the process consultant's stance in real organisations." },
+      { id:"D", text:"Separating observer from participant creates the psychological distance needed for reflective observation." },
+      { id:"E", text:"It trains students in the distinction between content (the tower) and process (how decisions are made)." },
+      { id:"F", text:"A non-participant observer guarantees accurate measurement of group productivity." },
+      { id:"G", text:"It replicates the position of a Gandhian Satyagrahi — witnessing truth rather than performing for outcomes." }
+    ],
+    correct: ["A","C","D","E","G"],
+    rationale: "The Observer role is a deliberate PC pedagogical device. It trains process focus (A), directly mirrors the consultant's stance (C), creates reflective distance (D), and enacts the content-process distinction (E). The Satyagraha connection is philosophically apt (G). Observer bias is NOT eliminated by non-participation (B is false). Productivity measurement is not the observer's function (F is false)."
+  },
+  {
+    id: 4,
+    text: "OCTAPACE is Udai Pareek's indigenous Indian contribution to OD culture theory. If Bharat Textiles Manufacturing shows 72% low voice opportunities and 68% high burnout, which OCTAPACE dimensions are MOST LIKELY deficient?",
+    hint: "Connect the data signals to specific OCTAPACE dimensions systematically.",
+    options: [
+      { id:"A", text:"Openness — suppressed voice suggests people are not sharing information, feedback, or dissent freely." },
+      { id:"B", text:"Experimentation — burnout reduces willingness to try new approaches under resource depletion." },
+      { id:"C", text:"Autonomy — low voice opportunities typically reflect constrained decision-making authority." },
+      { id:"D", text:"Confrontation — a culture that suppresses voice likely avoids addressing problems directly." },
+      { id:"E", text:"Trust — low voice and burnout together suggest employees do not trust that raising concerns is safe." },
+      { id:"F", text:"Collaboration — these metrics reveal no information about inter-group cooperation." },
+      { id:"G", text:"Pro-action — burnt-out employees rarely take initiative ahead of being asked." }
+    ],
+    correct: ["A","C","D","E","G"],
+    rationale: "72% low voice directly implicates Openness (A), Autonomy (C), Confrontation (D), and Trust (E). Burnout predicts reduced Pro-action (G). Experimentation (B) may decline under burnout but is not most directly implicated. Collaboration (F) cannot be inferred from these two metrics alone."
+  },
+  {
+    id: 5,
+    text: "The Johari Window concept suggests that Process Consultation expands the client system's 'Open' quadrant. Which consulting behaviours specifically enlarge each adjacent quadrant and move information into the 'Open' space?",
+    hint: "Map consultant behaviours to specific Johari quadrant transitions.",
+    options: [
+      { id:"A", text:"Surfacing the Blind Spot: giving feedback about patterns the client system cannot see from inside." },
+      { id:"B", text:"Reducing the Hidden Area: creating psychological safety so members disclose what they privately know." },
+      { id:"C", text:"Eliminating the Unknown: through psychometric testing, which converts unconscious material to conscious awareness." },
+      { id:"D", text:"Reducing the Blind Spot: through structured 360-degree feedback processes." },
+      { id:"E", text:"Expanding Unknown into Open: through deep therapy sessions that the OD consultant facilitates." },
+      { id:"F", text:"Reducing the Hidden Area: through confidential survey feedback where aggregate truth is returned to the group." },
+      { id:"G", text:"Surfacing the Blind Spot: through the PC observer's structured debrief after the tower exercise." }
+    ],
+    correct: ["A","B","D","F","G"],
+    rationale: "Blind Spot → Open: consultant feedback (A), 360-degree feedback (D), and observer debrief (G). Hidden → Open: creating safety for disclosure (B) and aggregate survey feedback (F). Psychometric testing (C) may surface unconscious material but is not standard PC methodology. The Unknown quadrant transition through therapy (E) conflates OD with individual psychotherapy."
+  },
+  {
+    id: 6,
+    text: "A student analyses Infosys's 360-degree feedback system and concludes: 'This is just an HR performance management tool.' An OD-informed critique of this conclusion would include which of the following arguments?",
+    hint: "What makes a feedback system an OD intervention rather than just HR process?",
+    options: [
+      { id:"A", text:"360-degree feedback is a Survey Feedback intervention — it returns diagnostic data to the group and makes hidden dynamics visible." },
+      { id:"B", text:"When run with a process consultation philosophy, 360 feedback expands the Open quadrant of recipients' Johari Windows." },
+      { id:"C", text:"It operationalises OCTAPACE's Openness and Confrontation dimensions at the system level." },
+      { id:"D", text:"It is primarily a developmental tool for individuals and has no systemic diagnostic value." },
+      { id:"E", text:"It embodies Gandhian Satyagraha — systematic truth-telling as an act of non-violent change." },
+      { id:"F", text:"The distinction between OD and HR tools is irrelevant — any feedback tool improves performance." },
+      { id:"G", text:"Infosys's implementation was OD-oriented precisely because results were used for system-level diagnosis, not only individual appraisal." }
+    ],
+    correct: ["A","B","C","E","G"],
+    rationale: "The student's error is treating the tool as inherently HR. 360-degree feedback becomes OD when it feeds Survey Feedback cycles (A), expands self-awareness through Johari dynamics (B), builds OCTAPACE culture (C), and is used to diagnose systemic patterns (G). The Satyagraha connection (E) is a legitimate Indian philosophical framing. Claiming no systemic value (D) contradicts OD theory. The tool/philosophy distinction (F) is precisely what matters."
+  },
+  {
+    id: 7,
+    text: "Process Consultation differs fundamentally from the Doctor-Patient model in how it treats the CLIENT's role. Which statements accurately describe differences a master's level OD practitioner should articulate?",
+    hint: "Focus on what changes for the CLIENT, not just what the consultant does differently.",
+    options: [
+      { id:"A", text:"In the Doctor-Patient model, the client describes symptoms; in PC, the client participates in diagnosis." },
+      { id:"B", text:"The Doctor-Patient model builds client capability for future diagnosis; PC solves the immediate problem." },
+      { id:"C", text:"PC treats the problem-definition process itself as an intervention — surfacing what the 'presenting problem' conceals." },
+      { id:"D", text:"The Doctor-Patient model creates dependency because the consultant owns the diagnostic frame; PC transfers this ownership." },
+      { id:"E", text:"In PC, the consultant facilitates discovery rather than delivering solutions, making the client the primary agent of change." },
+      { id:"F", text:"PC is only appropriate where the client is sophisticated enough to participate in diagnosis." },
+      { id:"G", text:"The Doctor-Patient model is appropriate when the problem is urgent, well-defined, and the consultant's technical expertise is clearly superior." }
+    ],
+    correct: ["A","C","D","E","G"],
+    rationale: "The client's transformed role in PC is central: they move from symptom-describer (A) to active diagnostic partner. PC treats problem definition itself as an intervention (C). The Doctor-Patient model creates dependency (D). In PC the client is the primary change agent (E). The Doctor-Patient model is legitimately preferred when technical, urgent, and expertise is clear (G). PC does NOT require client sophistication as a prerequisite (F is a misconception)."
+  },
+  {
+    id: 8,
+    text: "The Guru-Shishya relationship in Indian pedagogical tradition has been positioned as a philosophical predecessor to Schein's Process Consultation. Which aspects most accurately anticipate PC's key principles?",
+    hint: "Connect Indian philosophical wisdom to OD theory without forcing superficial parallels.",
+    options: [
+      { id:"A", text:"The Guru does not transmit knowledge directly; the Guru creates conditions for the student's own insight to emerge." },
+      { id:"B", text:"The Guru holds authority over the student, which mirrors the Expert consultant's authority over the client." },
+      { id:"C", text:"The relationship is built on trust (Vishwas) before knowledge transfer begins — paralleling Argyris's Free Choice condition." },
+      { id:"D", text:"The Shishya must actively work on their own development — passivity is incompatible with the relationship." },
+      { id:"E", text:"The Guru asks questions that the Shishya must answer from their own experience — a Socratic-PC parallel." },
+      { id:"F", text:"The Guru-Shishya model is hierarchical and therefore contradicts PC's participative ethic." },
+      { id:"G", text:"The goal of the relationship is the Shishya's growing independence, not permanent dependence on the Guru." }
+    ],
+    correct: ["A","C","D","E","G"],
+    rationale: "The Guru creates conditions rather than transmitting answers (A — direct PC parallel). Trust precedes knowledge (C). The Shishya must do the inner work (D). Socratic questioning (E). The ultimate goal is the Shishya's freedom from the Guru (G — paralleling PC's independence goal). The Guru's authority serves the student's growth, NOT the Expert model's authority relationship (B is a wrong parallel). Hierarchy does not contradict participative spirit (F is false)."
+  },
+  {
+    id: 9,
+    text: "During a Process Consultation engagement at an Indian NGO, the ED says: 'We don't need diagnosis — just tell us how to fix our team conflicts.' A skilled PC practitioner would respond by doing which of the following?",
+    hint: "Apply PC philosophy to a real contracting moment — Schein's 'entry and contracting'.",
+    options: [
+      { id:"A", text:"Accept the constraint and proceed to prescribe conflict resolution techniques (Expert mode)." },
+      { id:"B", text:"Name the tension between the client's desire for a quick solution and the PC process requirement without judging it." },
+      { id:"C", text:"Ask: 'What has made previous conflict resolution attempts unsuccessful?' — turning the request into an inquiry." },
+      { id:"D", text:"Explain that PC requires that the consultant first understand the presenting problem before any intervention." },
+      { id:"E", text:"Use Argyris's Valid Information condition to gently surface what the ED might not be aware of about the conflict's systemic roots." },
+      { id:"F", text:"Decline the engagement because the client is not ready for Process Consultation." },
+      { id:"G", text:"Explore whether 'team conflicts' is the presenting problem or a symptom of a deeper organisational issue." }
+    ],
+    correct: ["B","C","D","E","G"],
+    rationale: "The PC practitioner must honour both urgency and PC philosophy. Naming the tension (B), turning the request into inquiry (C), explaining the PC process requirement (D), surfacing systemic roots (E), and exploring whether 'conflict' is the presenting problem (G) are all correct. Accepting Expert mode (A) abandons PC. Declining because the client is not 'ready' (F) is paternalistic — PC works precisely with clients who resist diagnosis."
+  },
+  {
+    id: 10,
+    text: "Bharat Textiles Manufacturing: Engagement 4.1/10, Training 12 hrs vs 28 org avg, Voice Opportunities 72% low, Burnout 68% high. A student performing CAUSAL CHAIN analysis (Vedantic systems thinking) would map which interconnections as VALID diagnostic hypotheses?",
+    hint: "Systems thinking requires causal logic, not just correlation.",
+    options: [
+      { id:"A", text:"Training gap → Skill gap → Performance anxiety → Burnout" },
+      { id:"B", text:"Low voice → Unaddressed grievances → Disengagement → Burnout" },
+      { id:"C", text:"Burnout → High Training Investment → Improved Performance (the correct remediation chain)" },
+      { id:"D", text:"Low voice → Learned helplessness → Reduced engagement → Turnover intention" },
+      { id:"E", text:"Training gap → Burnout, mediated by: employees working harder to compensate for skill deficiencies" },
+      { id:"F", text:"High burnout → Reduced discretionary effort → Lower training utilisation → widening skill gap (feedback loop)" },
+      { id:"G", text:"Low engagement → Management increases monitoring → Further reduction in voice → deepening disengagement (vicious cycle)" }
+    ],
+    correct: ["A","B","D","E","F","G"],
+    rationale: "Vedantic systems thinking requires mapping interconnections and feedback loops. Training gap creating burnout through compensatory overwork (A, E), voice suppression leading to disengagement (B, D), reinforcing feedback loop of burnout widening skill gap (F), and vicious cycle of monitoring deepening disengagement (G) are all valid. Option C is NOT valid — burnout does not automatically lead to high training investment; this confuses remedy with causation."
+  },
+  {
+    id: 11,
+    text: "A student claims: 'OCTAPACE is just an Indian version of organisational climate surveys — there's nothing theoretically distinctive about it.' Which of the following represent GENUINE theoretical contributions of Pareek's OCTAPACE framework?",
+    hint: "What makes OCTAPACE distinctively valuable beyond Western climate instruments?",
+    options: [
+      { id:"A", text:"OCTAPACE operationalises the conditions for Argyris's interventions as measurable organisational culture dimensions." },
+      { id:"B", text:"Its eight dimensions are specifically calibrated to Indian hierarchical organisational contexts where voice suppression and conformity are common." },
+      { id:"C", text:"OCTAPACE is theoretically identical to the Competing Values Framework (Quinn) and adds no analytical value." },
+      { id:"D", text:"It provides a diagnostic bridge between Schein's PC conditions (relational) and assessable organisational culture (structural)." },
+      { id:"E", text:"The 'Confrontation' dimension challenges Indian organisations' tendency to avoid direct disagreement — it is culturally specific and corrective." },
+      { id:"F", text:"Openness, Trust, and Authenticity map directly onto Argyris's Valid Information, Free Choice, and Internal Commitment." },
+      { id:"G", text:"By naming 'Pro-action' and 'Experimentation' as culture dimensions, OCTAPACE extends beyond Western frameworks that focus only on output." }
+    ],
+    correct: ["A","B","D","E","F","G"],
+    rationale: "OCTAPACE makes genuine theoretical contributions: it operationalises Argyris's relational conditions as measurable dimensions (A, F), bridges PC theory and culture assessment (D), addresses cultural patterns in Indian organisations (B, E), and extends beyond output-focus (G). The claim it is identical to Quinn's CVF (C) is false — different origins, constructs, and assumptions."
+  },
+  {
+    id: 12,
+    text: "In the HCL Technologies 'Employees First' case, Vineet Nayar created platforms for employees to surface problems and propose solutions rather than prescribing solutions. Which analyses are THEORETICALLY VALID?",
+    hint: "Apply multiple frameworks — do not limit analysis to one lens.",
+    options: [
+      { id:"A", text:"Schein's PC model: HCL's transformation was Process Consultation at organisational system level — building collective capacity rather than prescribing solutions." },
+      { id:"B", text:"Argyris's conditions: transparency platforms satisfied Valid Information; employee choice satisfied Free Choice; bottom-up proposals generated Internal Commitment." },
+      { id:"C", text:"OCTAPACE: the 'Employees First' philosophy directly built Openness, Autonomy, and Collaboration dimensions." },
+      { id:"D", text:"Johari Window: transparency platforms moved issues from the Blind Spot into the Open quadrant." },
+      { id:"E", text:"The Expert model: Nayar diagnosed the structural problem himself and prescribed the solution." },
+      { id:"F", text:"Gandhian Decentralisation (Swaraj): the inverted pyramid embodied the principle that those closest to the work should have voice and authority." },
+      { id:"G", text:"OCTAPACE: the 'Smart Service Desk' specifically built the Confrontation dimension — problems surfaced and addressed rather than suppressed." }
+    ],
+    correct: ["A","B","C","D","F","G"],
+    rationale: "All five analytical lenses (PC, Argyris, OCTAPACE, Johari, Gandhian) can be applied legitimately. PC at system level (A), Argyris's three conditions satisfied (B), OCTAPACE gains from employee voice structures (C, G), Blind Spots surfaced through transparent problem-ticketing (D), Gandhian Swaraj (F) are all valid. Option E is INCORRECT — Nayar explicitly did NOT diagnose and prescribe; his genius was refusing to prescribe."
+  },
+  {
+    id: 13,
+    text: "A student applies Six Box Model to Bharat Textiles and writes: 'The Helpful Mechanisms box shows inadequate training (12 hrs vs 28 avg), which explains the skill gap.' A marker using OCTAPACE and PC lenses would identify which issues with this analysis?",
+    hint: "What is MISSING or WRONG? This tests evaluative rather than descriptive skill.",
+    options: [
+      { id:"A", text:"The student correctly applied the Six Box but stopped at description — did not diagnose root causes below the training hours deficit." },
+      { id:"B", text:"The student missed the systemic interconnection: inadequate Helpful Mechanisms links to deficient Leadership box and Rewards box." },
+      { id:"C", text:"The student's analysis is sufficient — skill gap = training gap is the complete causal explanation." },
+      { id:"D", text:"Through an OCTAPACE lens: does the low training reflect a Confrontation deficit (managers not raising the need) or Autonomy gap (employees not requesting development)?" },
+      { id:"E", text:"The PC practitioner would ask: has the client system itself been asked why training hours are low? Data tells us WHAT, not WHY." },
+      { id:"F", text:"The analysis conflates the Helpful Mechanisms box (training systems) with a separate causation layer — WHY are mechanisms weak?" },
+      { id:"G", text:"The student applied the wrong framework — OCTAPACE should be used for training gap diagnosis, not Six Box." }
+    ],
+    correct: ["A","B","D","E","F"],
+    rationale: "The student described but did not diagnose (A). Systems thinking requires tracing to other boxes — Leadership, Rewards (B). OCTAPACE adds a culture layer — Confrontation or Autonomy deficit? (D). PC lens asks for participative inquiry: why are hours low? (E). Causal chain requires one more step (F). 'Skill gap = training gap' (C) is oversimplification. Recommending OCTAPACE INSTEAD of Six Box (G) is incorrect — they are complementary."
+  },
+  {
+    id: 14,
+    text: "Sarvodaya, as a Gandhian principle, when applied to designing a 360-degree feedback system for Bharat Textiles, would produce which design implications that a conventional HR approach would likely MISS?",
+    hint: "Sarvodaya means welfare of ALL — trace who might be excluded by conventional designs.",
+    options: [
+      { id:"A", text:"The feedback system must be accessible to contract workers and daily wage workers, not only permanent employees." },
+      { id:"B", text:"Anonymous feedback must be aggregated carefully so minority voices are not inadvertently identifiable." },
+      { id:"C", text:"Results should be used for system-level OD decisions, not only individual performance improvement." },
+      { id:"D", text:"Managers who consistently receive low feedback should be dismissed immediately — this serves the majority." },
+      { id:"E", text:"Feedback instruments must be available in regional languages for employees with lower literacy levels." },
+      { id:"F", text:"The feedback loop must explicitly return aggregate findings to ALL employees including those who provided feedback." },
+      { id:"G", text:"Sarvodaya is an idealistic principle that cannot be operationalised in corporate HR processes." }
+    ],
+    correct: ["A","B","C","E","F"],
+    rationale: "Sarvodaya produces genuinely inclusive design: inclusion of informal workers (A), protection of marginal voices (B), systemic use of results (C), accessibility for all literacy levels (E — critical in Indian manufacturing), feedback loop completion to providers (F). Dismissal based on negative feedback (D) is punitive and contradicts Sarvodaya's developmental intent. Claiming Sarvodaya cannot be operationalised (G) is a failure of application."
+  },
+  {
+    id: 15,
+    text: "A student asks: 'When should I use Process Consultation and when should I use the Expert model?' Which guidance statements reflect a SOPHISTICATED, evidence-based answer?",
+    hint: "Avoid simple rules. The question tests judgment under complexity.",
+    options: [
+      { id:"A", text:"Use PC when the problem is ambiguous, complex, or involves human/cultural factors — the client's understanding of the problem needs to surface." },
+      { id:"B", text:"Use the Expert model when the technical specification is clear and the client clearly lacks knowledge to participate meaningfully in diagnosis." },
+      { id:"C", text:"Always use PC — the Expert model is obsolete and has been superseded by process approaches." },
+      { id:"D", text:"In an Indian hierarchical context, the Expert model may feel culturally appropriate to clients, but this comfort is itself a diagnostic signal — it may reflect Confrontation and Autonomy deficits." },
+      { id:"E", text:"PC is less effective in time-critical situations where rapid Expert advice is operationally necessary." },
+      { id:"F", text:"The most skilled OD consultants fluidly move between models within the same engagement as the situation changes." },
+      { id:"G", text:"The Doctor-Patient model is generally a superior hybrid that eliminates the need to choose between Expert and PC." }
+    ],
+    correct: ["A","B","D","E","F"],
+    rationale: "Sophisticated judgment requires nuance: PC for complex/ambiguous/human-system problems (A); Expert model has genuine value when technical expertise is clearly superior (B). The Indian cultural context insight (D) is a master's-level observation. PC has limitations in genuine time emergencies (E). Fluid movement between models marks the experienced practitioner (F). 'Always use PC' (C) is naïve. The Doctor-Patient model is NOT a superior hybrid eliminating the choice (G)."
+  }
+];
+
+// ── STATE ──────────────────────────────────────────
+let submitted = false;
+let startTime = Date.now();
+
+// ── RENDER ─────────────────────────────────────────
+function renderQuestions() {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  startTime = Date.now();
+
+  questions.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `qcard-${q.id}`;
+
+    const optionsHtml = q.options.map(opt => `
+      <li class="option-item" id="opt-${q.id}-${opt.id}">
+        <label>
+          <input type="checkbox" id="chk-${q.id}-${opt.id}" value="${opt.id}" onchange="updateProgress()">
+          <span class="option-tick"></span>
+          <span class="option-text"><strong>${opt.id}.</strong> ${opt.text}</span>
+        </label>
+      </li>`).join('');
+
+    card.innerHTML = `
+      <div class="q-header">
+        <span class="q-num">Q${q.id}</span>
+        <span class="q-text">${q.text}</span>
+        <span class="q-marks">2 marks</span>
+      </div>
+      <div class="q-body">
+        <div class="q-hint">💡 ${q.hint}</div>
+        <ul class="options-list">${optionsHtml}</ul>
+        <div class="rationale-block" id="rat-${q.id}">
+          <strong>Rationale</strong>${q.rationale}
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function updateProgress() {
+  let answered = 0;
+  questions.forEach(q => {
+    const any = q.options.some(opt => document.getElementById(`chk-${q.id}-${opt.id}`)?.checked);
+    if (any) answered++;
+  });
+  const pct = (answered / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${answered} of ${questions.length} answered`;
+  document.getElementById('progressPct').textContent = Math.round(pct) + '%';
+}
+
+// ── SCORING ────────────────────────────────────────
+function calcScore(q) {
+  const k = 2 / q.correct.length;
+  let raw = 0;
+  q.options.forEach(opt => {
+    const checked = document.getElementById(`chk-${q.id}-${opt.id}`)?.checked;
+    const isCorrect = q.correct.includes(opt.id);
+    if (checked && isCorrect)  raw += k;
+    if (checked && !isCorrect) raw -= k;
+    if (!checked && isCorrect) raw -= k;
+  });
+  return Math.max(0, Math.min(2, parseFloat(raw.toFixed(3))));
+}
+
+// ── SUBMIT ─────────────────────────────────────────
+function submitQuiz() {
+  if (submitted) return;
+
+  const name = document.getElementById('studentName').value.trim();
+  if (!name) {
+    document.getElementById('studentName').focus();
+    document.getElementById('studentName').style.borderBottomColor = '#c0392b';
+    setTimeout(() => { document.getElementById('studentName').style.borderBottomColor = ''; }, 2000);
+    return;
+  }
+
+  submitted = true;
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = 'Submitted ✓';
+  document.getElementById('progressFill').style.width = '100%';
+
+  const timeTaken = ((Date.now() - startTime) / 60000).toFixed(1);
+  let totalScore = 0;
+  const questionResults = [];
+
+  questions.forEach(q => {
+    const k = 2 / q.correct.length;
+    let qScore = 0;
+    const chosenOptions = [];
+
+    q.options.forEach(opt => {
+      const checked = document.getElementById(`chk-${q.id}-${opt.id}`)?.checked;
+      const isCorrect = q.correct.includes(opt.id);
+      const li = document.getElementById(`opt-${q.id}-${opt.id}`);
+
+      if (checked) chosenOptions.push(opt.id);
+
+      if (checked && isCorrect)  { qScore += k; li.classList.add('correct-chosen'); }
+      if (checked && !isCorrect) { qScore -= k; li.classList.add('wrong-chosen'); }
+      if (!checked && isCorrect) { qScore -= k; li.classList.add('missed-correct'); }
+
+      document.getElementById(`chk-${q.id}-${opt.id}`).disabled = true;
+    });
+
+    qScore = Math.max(0, Math.min(2, qScore));
+    totalScore += qScore;
+
+    const isFullyCorrect = JSON.stringify(chosenOptions.sort()) === JSON.stringify([...q.correct].sort());
+    questionResults.push({
+      question: `Q${q.id}`,
+      chosen: chosenOptions.length ? chosenOptions.join(', ') : '(none)',
+      correct: isFullyCorrect
+    });
+
+    // Show rationale + score tag
+    const rat = document.getElementById(`rat-${q.id}`);
+    rat.classList.add('shown');
+    const tag = document.createElement('div');
+    tag.className = `q-score-tag ${qScore >= 1.5 ? 'pos' : qScore >= 0.5 ? 'zero' : 'neg'}`;
+    tag.textContent = `Score: ${qScore.toFixed(2)} / 2`;
+    rat.appendChild(tag);
+  });
+
+  totalScore = parseFloat(totalScore.toFixed(2));
+  const pct = (totalScore / 30) * 100;
+
+  // ── Render score panel ──
+  document.getElementById('scoreBig').innerHTML =
+    `${totalScore}<span class="denom"> / 30</span>`;
+
+  document.getElementById('scoreBreakdown').innerHTML = `
+    <div class="breakdown-item green">
+      <div class="b-val">${totalScore}</div>
+      <div class="b-lbl">Final Score</div>
+    </div>
+    <div class="breakdown-item amber">
+      <div class="b-val">${pct.toFixed(1)}%</div>
+      <div class="b-lbl">Percentage</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="b-val">${timeTaken}</div>
+      <div class="b-lbl">Minutes Taken</div>
+    </div>`;
+
+  let band, bandClass;
+  if (pct >= 80)      { band = 'Excellent'; bandClass = 'band-excellent'; }
+  else if (pct >= 60) { band = 'Good';      bandClass = 'band-good'; }
+  else if (pct >= 40) { band = 'Average';   bandClass = 'band-average'; }
+  else                { band = 'Needs Work'; bandClass = 'band-needs-work'; }
+
+  const gbEl = document.getElementById('gradeBand');
+  gbEl.textContent = band;
+  gbEl.className = `grade-band ${bandClass}`;
+
+  const scorePanel = document.getElementById('scorePanel');
+  scorePanel.classList.add('shown');
+  scorePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // ── Save to Google Sheet ──
+  saveToSheet({
+    studentName: name,
+    totalScore: totalScore,
+    maxScore: 30,
+    percentage: pct.toFixed(1),
+    gradeBand: band,
+    timeTaken: timeTaken,
+    questions: questionResults
+  });
+}
+
+// ── GOOGLE SHEET SAVE ──────────────────────────────
+async function saveToSheet(data) {
+  const statusEl = document.getElementById('saveStatus');
+
+  if (!SHEET_URL || SHEET_URL === "PASTE_YOUR_APPS_SCRIPT_URL_HERE") {
+    statusEl.className = 'save-status failed';
+    statusEl.textContent = '⚠ Sheet URL not configured — results not saved';
+    return;
+  }
+
+  try {
+    statusEl.className = 'save-status saving';
+    statusEl.textContent = '⟳ Saving your results…';
+
+    await fetch(SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    statusEl.className = 'save-status saved';
+    statusEl.textContent = '✓ Results saved to class record';
+  } catch (err) {
+    statusEl.className = 'save-status failed';
+    statusEl.textContent = '⚠ Could not save — please inform your instructor';
+  }
+}
+
+// ── INIT ───────────────────────────────────────────
+renderQuestions();
+</script>
+</body>
+</html>
