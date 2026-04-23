@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DSEH002 · Instructor Launch — Full Syllabus Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1410;color:#faf7f2;font-family:'Lato',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.card{background:#f0ebe1;color:#1a1410;border-radius:8px;padding:2.5rem 2rem;max-width:520px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.eyebrow{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:#e8871a;margin-bottom:.8rem}
+h1{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.5rem}
+.sub{font-size:.85rem;color:rgba(26,20,16,.6);font-family:'DM Mono',monospace;margin-bottom:2rem}
+.status-box{background:#fff;border:1.5px solid rgba(26,20,16,.12);border-radius:6px;padding:1rem 1.2rem;margin-bottom:1.5rem;min-height:56px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.85rem;color:rgba(26,20,16,.6)}
+.status-box.open{border-color:#2d6a4f;background:#d8f3dc;color:#155724;font-weight:500}
+.status-box.closed{border-color:#c0392b;background:#fde8e6;color:#c0392b;font-weight:500}
+.btn{display:block;width:100%;border:none;border-radius:5px;padding:.9rem 1rem;font-family:'DM Mono',monospace;font-size:.88rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-bottom:.8rem}
+.btn-open{background:#2d6a4f;color:#fff}
+.btn-open:hover{background:#1e4d38}
+.btn-open:disabled{background:#95d5b2;cursor:not-allowed}
+.btn-close{background:#c0392b;color:#fff}
+.btn-close:hover{background:#922b21}
+.btn-close:disabled{background:#f5c6c2;cursor:not-allowed}
+.btn-reset{background:#b7791f;color:#fff}
+.btn-reset:hover{background:#8a5a17}
+.divider{border:none;border-top:1px solid rgba(26,20,16,.1);margin:1.2rem 0}
+.note{font-size:.78rem;color:rgba(26,20,16,.5);font-family:'DM Mono',monospace;line-height:1.6}
+.student-link{background:#1a1410;color:#f5a840;border-radius:5px;padding:.75rem 1rem;font-family:'DM Mono',monospace;font-size:.75rem;word-break:break-all;margin-bottom:1.2rem;text-align:left;letter-spacing:.02em}
+a.copy-btn{display:inline-block;background:#e8871a;color:#fff;border-radius:3px;padding:.3rem .8rem;font-size:.72rem;font-family:'DM Mono',monospace;cursor:pointer;text-decoration:none;margin-top:.5rem}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="eyebrow">DSEH002 · Instructor Control</div>
+  <h1>Full Syllabus Quiz</h1>
+  <div class="sub">15 Questions · 30 Marks · 15 Minutes</div>
+
+  <div class="status-box" id="statusBox">Checking quiz status…</div>
+
+  <button class="btn btn-open" id="btnOpen" onclick="setQuiz('open')" disabled>Open Quiz Window for Students</button>
+  <button class="btn btn-close" id="btnClose" onclick="setQuiz('closed')" disabled>Close Quiz Window</button>
+  <button class="btn btn-reset" id="btnReset" onclick="resetQuiz()">Reset (Clear All Submissions)</button>
+
+  <hr class="divider"/>
+
+  <p style="font-size:.8rem;font-family:'DM Mono',monospace;color:rgba(26,20,16,.6);margin-bottom:.6rem">Student quiz link to share:</p>
+  <div class="student-link" id="quizLink">https://rksinghdu.github.io/dseh002-quizzes/DSEH002_MCQ_FullSyllabus_v1.0.html</div>
+  <a class="copy-btn" onclick="copyLink()">Copy Link</a>
+
+  <hr class="divider"/>
+  <p class="note">Open the quiz window just before students enter the room.<br>Close it after 15 minutes to prevent late submissions.<br>Reset clears localStorage flags — use before each new session.</p>
+</div>
+
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwdKzg4KDxohvhyYEQOPjoSKo4wS7KgPvioRnlpUill2VI8rZMFGN2ndgT-CwCf_q0FWA/exec';
+const QUIZ_ID='fullsyllabus';
+
+function setStatus(text,cls){
+  const b=document.getElementById('statusBox');
+  b.textContent=text;b.className='status-box '+(cls||'');
+}
+
+function checkStatus(){
+  setStatus('Checking…','');
+  fetch(SCRIPT_URL+'?action=checkOpen&quiz='+QUIZ_ID)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.open){
+        setStatus('✓ Quiz is OPEN — students can enter','open');
+        document.getElementById('btnOpen').disabled=true;
+        document.getElementById('btnClose').disabled=false;
+      } else {
+        setStatus('✗ Quiz is CLOSED','closed');
+        document.getElementById('btnOpen').disabled=false;
+        document.getElementById('btnClose').disabled=true;
+      }
+    })
+    .catch(()=>setStatus('⚠ Could not reach Apps Script. Check deployment URL.',''));
+}
+
+function setQuiz(state){
+  document.getElementById('btnOpen').disabled=true;
+  document.getElementById('btnClose').disabled=true;
+  setStatus('Updating…','');
+  fetch(SCRIPT_URL,{
+    method:'POST',
+    body:JSON.stringify({action:'setQuizState',quiz:QUIZ_ID,state:state}),
+    headers:{'Content-Type':'application/json'}
+  })
+  .then(r=>r.json())
+  .then(()=>setTimeout(checkStatus,1000))
+  .catch(()=>{setStatus('⚠ Error — check Apps Script logs','');checkStatus();});
+}
+
+function resetQuiz(){
+  if(!confirm('This will clear the server-side duplicate-name list for this quiz, allowing re-attempts. Proceed?'))return;
+  fetch(SCRIPT_URL,{
+    method:'POST',
+    body:JSON.stringify({action:'resetQuiz',quiz:QUIZ_ID}),
+    headers:{'Content-Type':'application/json'}
+  })
+  .then(()=>alert('Reset done. Students can now re-enter their names.'))
+  .catch(()=>alert('Reset request sent (check Apps Script logs).'));
+}
+
+function copyLink(){
+  navigator.clipboard.writeText('https://rksinghdu.github.io/dseh002-quizzes/DSEH002_MCQ_FullSyllabus_v1.0.html')
+    .then(()=>alert('Link copied!'));
+}
+
+checkStatus();
+</script>
+</body>
+</html>
