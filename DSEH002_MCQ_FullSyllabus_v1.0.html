@@ -47,6 +47,7 @@ select:focus,input[type=email]:focus{border-color:var(--saf)}
 .qn{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--saf);border:1px solid var(--saf);border-radius:2px;padding:.12rem .45rem;white-space:nowrap}
 .qt{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.05em;color:rgba(26,20,16,.42)}
 .qtxt{font-size:.97rem;font-weight:700;line-height:1.55;margin-bottom:1rem}
+.scenario{font-size:.88rem;background:var(--safp);border-left:3px solid var(--saf);padding:.65rem .9rem;border-radius:0 4px 4px 0;margin-bottom:.9rem;line-height:1.6;font-style:italic;color:rgba(26,20,16,.78)}
 .opts{display:flex;flex-direction:column;gap:.5rem}
 .ol{display:flex;align-items:flex-start;gap:.65rem;padding:.65rem .85rem;border-radius:4px;border:1.5px solid var(--bdr);background:#fff;cursor:pointer;font-size:.9rem;transition:all .15s}
 .ol:hover{border-color:var(--saf);background:var(--safp)}
@@ -79,27 +80,21 @@ footer{text-align:center;padding:1.6rem 1.5rem;font-size:.74rem;color:rgba(26,20
   <div class="sub">University of Delhi · Dept of Commerce · Prof R K Singh · Private Circulation</div>
   <div class="chips">
     <span class="chip">15 Questions</span><span class="chip">30 Marks</span>
-    <span class="chip">Multiple Correct</span><span class="chip">Normalised Scoring</span>
+    <span class="chip">Multiple Correct</span><span class="chip">Analytical &amp; Critical</span>
     <span class="chip">15 Minutes</span>
   </div>
 </header>
 <div class="tbar" id="tbar">⏱ Time remaining: <span id="tdisp">15:00</span></div>
 
-<!-- ENTRY SCREEN -->
 <div class="wrap" id="entry">
   <div class="card">
     <h2>Begin Assessment</h2>
     <p>Select your name from the list and enter your email. Your result and personalised feedback will be emailed to you on submission.</p>
-
     <label class="lbl">Select Your Name</label>
-    <select id="iname">
-      <option value="">— loading student list… —</option>
-    </select>
-    <p class="hint" id="rosterhint">Fetching roster from Student_Roster tab…</p>
-
+    <select id="iname"><option value="">— loading student list… —</option></select>
+    <p class="hint" id="rosterhint">Fetching roster…</p>
     <label class="lbl">Your Email Address</label>
     <input type="email" id="iemail" placeholder="yourname@example.com" autocomplete="email"/>
-
     <p id="err" class="err"></p>
     <button class="btn" id="startbtn" onclick="go()" disabled>Begin Quiz →</button>
   </div>
@@ -138,178 +133,333 @@ footer{text-align:center;padding:1.6rem 1.5rem;font-size:.74rem;color:rgba(26,20
 
 <script>
 var LOGGER_URL='https://script.google.com/macros/s/AKfycbwWVaHBwvK8DrsAvaYxobjeD70Q7vQgWBPGULCdt5IEdyhmxJBTHoK0Cxz2hIPiGqIJNg/exec';
-var DUR=15*60, KEY='dseh002_fs_v1';
+var DUR=15*60, KEY='dseh002_fs_v2';
 var rosterData=[], sname='', semail='', tleft=DUR, tiv=null, done=false;
 
 var QS=[
-{n:1,t:'OD Foundations',q:'Which of the following accurately describe the philosophical and methodological foundations of Organizational Development (OD)?',o:['OD is grounded in humanistic values emphasising human dignity, equality, and democratic participation.','Action research — a cyclical process of diagnosis, intervention, and evaluation — is a defining OD methodology.','OD operates exclusively at the individual level and does not address system-level dynamics.','OD emerged primarily from industrial engineering and treats human behaviour as a variable to be optimised.','Gandhian Trusteeship anticipates OD\'s stakeholder orientation by positioning leaders as stewards of collective wellbeing.','Planned change at the organisation-wide level, guided by a change agent, is a hallmark of OD.','OD is a one-time event rather than an iterative, data-driven process.'],c:[0,1,4,5]},
-{n:2,t:'Force Field Analysis',q:'A manufacturing firm has high burnout. Which of the following are restraining forces preventing burnout reduction (Lewin\'s Force Field Analysis)?',o:['A cultural norm equating long hours with commitment and loyalty.','An active Works Committee that regularly raises wellbeing concerns.','Absence of structured voice mechanisms for employees to report stress.','Skill gaps that inflate perceived workload.','A new mandatory mindfulness programme across all departments.','Middle management resistance to redistributing workloads due to performance targets.','External trade union advocacy demanding occupational health audits.'],c:[0,2,3,5]},
-{n:3,t:'Schein — Three Models',q:'Which statements correctly characterise Schein\'s Process Consultation model and distinguish it from the Expert and Doctor-Patient models?',o:['The consultant helps the client develop their own diagnostic capability rather than providing solutions.','The consultant diagnoses unilaterally and prescribes treatment without client involvement.','The relationship is genuinely collaborative — the client owns the problem throughout.','Process consultation strengthens the client\'s long-term self-sufficiency and change capacity.','The client passively receives expert analysis, as in a medical consultation.','Effective process consultation requires the consultant to be the sole repository of OD expertise.','The consultant\'s primary role is facilitating reflection and joint problem-solving, not delivering answers.'],c:[0,2,3,6]},
-{n:4,t:'OCTAPACE',q:'Which statements about the OCTAPACE framework for diagnosing organisational culture are accurate?',o:['OCTAPACE was developed by Udai Pareek and is widely used in Indian OD practice.','The "C" stands for Confrontation — addressing issues directly, not interpersonal aggression.','OCTAPACE is a Western framework adapted from Schein\'s culture model.','High scores across all eight dimensions indicate a psychologically safe, OD-conducive culture.','Autonomy in OCTAPACE refers to organisational independence from market competition.','Experimentation reflects cultural willingness to try new approaches and learn from outcomes.','The framework was developed by Edgar Schein alongside his three-level culture model.'],c:[0,1,3,5]},
-{n:5,t:'Survey Feedback',q:'Which statements accurately characterise Survey Feedback as an OD intervention (Rensis Likert, 1947)?',o:['Survey feedback is among the earliest formalised OD interventions, originating ~1947 at the University of Michigan.','The key mechanism of change is the structured group meeting where data is fed back — not the survey instrument itself.','Results are shared only with senior management to protect confidentiality.','Survey feedback enables collective sensemaking — groups discuss shared data and commit to action.','Anonymous surveys alone are sufficient as an OD intervention without face-to-face feedback sessions.','The cycle follows action research logic: data collection → analysis → feedback → action planning → evaluation.','It is most effective when groups discuss only "safe" findings, avoiding conflictual topics.'],c:[0,1,3,5]},
-{n:6,t:'Johari Window',q:'Applying the Johari Window (Luft & Ingham, 1955) to a new cross-functional change team, which insights are theoretically valid?',o:['Structured peer feedback exercises can systematically reduce each member\'s "blind spot" quadrant.','Sharing assumptions and concerns reduces the "hidden" quadrant and expands the "open arena".','A large "unknown" quadrant may indicate low collective self-awareness and unrealised collaboration potential.','Maximising the "open arena" requires withholding personal vulnerabilities to stay professional.','Increasing the "blind spot" through less feedback improves change team performance.','The Johari Window has no application in organisational groups — it is clinical psychology only.','As trust deepens, the "open arena" naturally expands through reciprocal disclosure and feedback.'],c:[0,1,2,6]},
-{n:7,t:'Argyris — Three Conditions',q:'Which of the following are among Argyris\'s three conditions for effective human systems intervention, correctly described?',o:['Valid and useful information: participants need accurate data about the situation being changed.','Free and informed choice: decisions must be based on relevant information without coercion.','Internal commitment: participants must feel personally invested in and responsible for choices made.','External pressure from the consultant is a necessary motivator even when it creates dependency.','Organisational hierarchy must be reinforced so authority structures guide the intervention direction.','The consultant must retain final decision-making power to ensure professional standards.','When all three conditions are met, the client system owns both diagnosis and subsequent interventions.'],c:[0,1,2,6]},
-{n:8,t:'Hackman–Oldham JCM',q:'Which statements correctly apply the Hackman–Oldham Job Characteristics Model (JCM)?',o:['Skill variety, task identity, and task significance collectively produce "experienced meaningfulness".','Autonomy produces the psychological state of "experienced responsibility" for outcomes.','Feedback from the job itself — not only supervisors — produces "knowledge of actual results".','Task identity refers to completing a whole, identifiable piece of work from beginning to end.','External financial rewards are the primary source of experienced meaningfulness.','Autonomy refers to an employee\'s freedom to determine organisational strategy and resource allocation.','The JCM has been applied in sociotechnical redesign to enrich depleted or over-fragmented jobs.'],c:[0,1,2,3,6]},
-{n:9,t:'STS Theory',q:'Which statements are consistent with Sociotechnical Systems (STS) theory (Tavistock Institute)?',o:['The technical and social systems must be jointly optimised — neither alone produces optimal outcomes.','Semi-autonomous work groups with collective responsibility are a structural outcome of STS design.','STS advocates maximum automation regardless of social consequences.','The theory originated from Tavistock research in British coal mining (Trist & Bamforth, 1951).','A core STS principle is to control variance at the point where it occurs.','STS assumes human factors are invariably subordinate to technical requirements.','Open systems thinking is foundational: the work system must be understood in relation to its environment.'],c:[0,1,3,4,6]},
-{n:10,t:'Appreciative Inquiry',q:'Which statements accurately describe Cooperrider & Srivastva\'s Appreciative Inquiry 4-D cycle and its philosophical assumptions?',o:['Discovery involves identifying and amplifying the organisation\'s existing strengths and life-giving forces.','AI begins with deficit analysis, identifying root causes before moving to solutions.','Dream involves collective envisioning of what the organisation could become at its best.','Design translates the dream into actionable "social architecture" — structures and processes.','Destiny focuses on sustaining and institutionalising positive change through ongoing action.','AI\'s core assumption is that organisations are problems to be solved rather than mysteries to appreciate.','AI draws on social constructionism — what we study and discuss shapes organisational reality.'],c:[0,2,3,4,6]},
-{n:11,t:'Positive Deviance',q:'Which statements correctly describe the Positive Deviance (PD) approach?',o:['PD identifies individuals or groups who succeed against the odds using only commonly available resources.','Solutions in PD are designed by external experts importing best practices from elsewhere.','PD is premised on the belief that solutions usually already exist within the community itself.','The approach was applied successfully to childhood malnutrition in rural Vietnam in the 1990s.','PD assumes most community members lack the knowledge to solve their own problems.','PD aligns with Gandhian Sarvodaya by seeking solutions from the grassroots rather than imposing them.','PD requires significant external financial investment to scale positive deviant practices.'],c:[0,2,3,5]},
-{n:12,t:'Burke–Litwin Model',q:'Which of the following are correctly classified within the Burke–Litwin Causal Model?',o:['External environment is a transformational factor — often the primary driver of fundamental transformation.','Mission and strategy are transformational factors that shape direction and identity.','Management practices are transactional factors affecting day-to-day functioning.','Leadership is a transformational factor influencing culture, values, and strategic direction.','Systems and policies are transformational factors because they directly redefine purpose.','Work unit climate is a transformational factor operating at the same causal depth as culture.','Organisational culture is a transformational factor — deeply held assumptions shaping operations.'],c:[0,1,2,3,6]},
-{n:13,t:'ADKAR Model',q:'Which statements correctly characterise the ADKAR model and its application in OD practice?',o:['ADKAR stands for Awareness, Desire, Knowledge, Ability, and Reinforcement.','Awareness refers to understanding why the change is necessary and what happens if it does not occur.','Desire cannot be mandated — it must be cultivated through genuine engagement with individual motivations.','ADKAR begins with the Ability phase, as skill-building is the foundation of readiness.','Reinforcement — mechanisms to sustain changed behaviour — is essential to prevent reversion.','The model suggests initiatives fail when any single ADKAR building block is missing or weak in the individual.','ADKAR focuses exclusively on group-level change, not on individual transition.'],c:[0,1,2,4,5]},
-{n:14,t:'Cummings & Worley Taxonomy',q:'Which correctly illustrate Cummings & Worley\'s four-category OD intervention taxonomy?',o:['Human process interventions include process consultation, team building, conflict resolution, and Open Space Technology.','Technostructural interventions include job design (JCM), work restructuring, quality circles, and STS redesign.','Survey feedback is a strategic intervention because it has organisation-wide impact.','HRM interventions include performance management, reward redesign, career development, and diversity initiatives.','Strategic interventions include culture change, M&A integration, and alliances.','Appreciative Inquiry is a technostructural intervention because it restructures processes.','Work redesign using the JCM is a technostructural intervention targeting individual job structure.'],c:[0,1,3,4,6]},
-{n:15,t:'Gandhian OD Principles',q:'Which statements accurately connect Gandhian principles to OD theory and practice, including chronological positioning?',o:['Satyagraha provides an ethical foundation for OD — including courageous diagnostic feedback — predating Lewin\'s work.','Sarvodaya anticipates stakeholder theory by decades, requiring interventions to benefit all, not just dominant stakeholders.','Gandhian principles were derived from Western scientific management and are supplementary to OD.','Trusteeship positions leaders as stewards holding resources on behalf of all stakeholders — anticipating servant leadership.','Non-violence (Ahimsa) has no relevance to organisational conflict resolution.','Gram Swarajya reflects decentralisation and grassroots empowerment central to participative OD.','Vedantic systems thinking — interconnectedness (Atman-Brahman) — predates Open Systems Theory (1950s).'],c:[0,1,3,5,6]}
+/* ── Q1: OD Foundations ──────────────────────────────────── */
+{n:1,t:'OD Foundations',sc:null,
+q:'Which of the following accurately describe the philosophical and methodological foundations of Organizational Development (OD)?',
+o:['OD is grounded in humanistic values emphasising human dignity, equality, and democratic participation.',
+   'Action research — a cyclical process of diagnosis, intervention, and evaluation — is a defining OD methodology.',
+   'OD operates exclusively at the individual level and does not address system-level dynamics.',
+   'OD emerged primarily from industrial engineering and treats human behaviour as a variable to be optimised.',
+   'Gandhian Trusteeship anticipates OD\'s stakeholder orientation by positioning leaders as stewards of collective wellbeing.',
+   'Planned change at the organisation-wide level, guided by a change agent, is a hallmark of OD.',
+   'OD is a one-time event rather than an iterative, data-driven process.'],
+c:[0,1,4,5]},
+
+/* ── Q2: Force Field Analysis ────────────────────────────── */
+{n:2,t:'Force Field Analysis',sc:null,
+q:'A manufacturing firm has high burnout. Which of the following are restraining forces preventing burnout reduction (Lewin\'s Force Field Analysis)?',
+o:['A cultural norm equating long hours with commitment and loyalty.',
+   'An active Works Committee that regularly raises wellbeing concerns.',
+   'Absence of structured voice mechanisms for employees to report stress.',
+   'Skill gaps that inflate perceived workload.',
+   'A new mandatory mindfulness programme across all departments.',
+   'Middle management resistance to redistributing workloads due to performance targets.',
+   'External trade union advocacy demanding occupational health audits.'],
+c:[0,2,3,5]},
+
+/* ── Q3: Schein Three Models ─────────────────────────────── */
+{n:3,t:'Schein — Three Models',sc:null,
+q:'Which statements correctly characterise Schein\'s Process Consultation model and distinguish it from the Expert and Doctor-Patient models?',
+o:['The consultant helps the client develop their own diagnostic capability rather than providing solutions.',
+   'The consultant diagnoses unilaterally and prescribes treatment without client involvement.',
+   'The relationship is genuinely collaborative — the client owns the problem throughout.',
+   'Process consultation strengthens the client\'s long-term self-sufficiency and change capacity.',
+   'The client passively receives expert analysis, as in a medical consultation.',
+   'Effective process consultation requires the consultant to be the sole repository of OD expertise.',
+   'The consultant\'s primary role is facilitating reflection and joint problem-solving, not delivering answers.'],
+c:[0,2,3,6]},
+
+/* ── Q4: OCTAPACE ────────────────────────────────────────── */
+{n:4,t:'OCTAPACE',sc:null,
+q:'Which statements about the OCTAPACE framework for diagnosing organisational culture are accurate?',
+o:['OCTAPACE was developed by Udai Pareek and is widely used in Indian OD practice.',
+   'The "C" stands for Confrontation — addressing issues directly, not interpersonal aggression.',
+   'OCTAPACE is a Western framework adapted from Schein\'s culture model.',
+   'High scores across all eight dimensions indicate a psychologically safe, OD-conducive culture.',
+   'Autonomy in OCTAPACE refers to organisational independence from market competition.',
+   'Experimentation reflects cultural willingness to try new approaches and learn from outcomes.',
+   'The framework was developed by Edgar Schein alongside his three-level culture model.'],
+c:[0,1,3,5]},
+
+/* ── Q5: Survey Feedback ─────────────────────────────────── */
+{n:5,t:'Survey Feedback',sc:null,
+q:'Which statements accurately characterise Survey Feedback as an OD intervention (Rensis Likert, 1947)?',
+o:['Survey feedback is among the earliest formalised OD interventions, originating ~1947 at the University of Michigan.',
+   'The key mechanism of change is the structured group meeting where data is fed back — not the survey instrument itself.',
+   'Results are shared only with senior management to protect confidentiality.',
+   'Survey feedback enables collective sensemaking — groups discuss shared data and commit to action.',
+   'Anonymous surveys alone are sufficient as an OD intervention without face-to-face feedback sessions.',
+   'The cycle follows action research logic: data collection → analysis → feedback → action planning → evaluation.',
+   'It is most effective when groups discuss only "safe" findings, avoiding conflictual topics.'],
+c:[0,1,3,5]},
+
+/* ── Q6: Johari Window ───────────────────────────────────── */
+{n:6,t:'Johari Window',sc:null,
+q:'Applying the Johari Window (Luft & Ingham, 1955) to a new cross-functional change team, which insights are theoretically valid?',
+o:['Structured peer feedback exercises can systematically reduce each member\'s "blind spot" quadrant.',
+   'Sharing assumptions and concerns reduces the "hidden" quadrant and expands the "open arena".',
+   'A large "unknown" quadrant may indicate low collective self-awareness and unrealised collaboration potential.',
+   'Maximising the "open arena" requires withholding personal vulnerabilities to stay professional.',
+   'Increasing the "blind spot" through less feedback improves change team performance.',
+   'The Johari Window has no application in organisational groups — it is clinical psychology only.',
+   'As trust deepens, the "open arena" naturally expands through reciprocal disclosure and feedback.'],
+c:[0,1,2,6]},
+
+/* ── Q7: Argyris Three Conditions ───────────────────────── */
+{n:7,t:'Argyris — Three Conditions',sc:null,
+q:'Which of the following are among Argyris\'s three conditions for effective human systems intervention, correctly described?',
+o:['Valid and useful information: participants need accurate data about the situation being changed.',
+   'Free and informed choice: decisions must be based on relevant information without coercion.',
+   'Internal commitment: participants must feel personally invested in and responsible for choices made.',
+   'External pressure from the consultant is a necessary motivator even when it creates dependency.',
+   'Organisational hierarchy must be reinforced so authority structures guide the intervention direction.',
+   'The consultant must retain final decision-making power to ensure professional standards.',
+   'When all three conditions are met, the client system owns both diagnosis and subsequent interventions.'],
+c:[0,1,2,6]},
+
+/* ── Q8: JCM — ANALYTICAL SCENARIO ──────────────────────── */
+{n:8,t:'Hackman–Oldham JCM — Application',
+sc:'A garment factory redesigns sewing-machine operator roles so that each operator now assembles a complete shirt from start to finish (previously each worker did only one seam). Operators also receive weekly output-quality reports directly from the inspection unit.',
+q:'Applying the Hackman–Oldham Job Characteristics Model, which of the following analytical statements are correct?',
+o:['The redesign primarily enhances task identity, because each operator now completes a whole, identifiable piece of work.',
+   'The weekly quality report increases the feedback dimension, producing the psychological state of "knowledge of actual results".',
+   'Because wages are unchanged, the redesign cannot affect experienced meaningfulness — only extrinsic rewards can.',
+   'Skill variety is likely to increase, since completing a full shirt requires a wider range of sewing competencies than a single seam.',
+   'The change will automatically produce high internal motivation regardless of individual growth-need strength.',
+   'Task significance may also rise, as operators can now see how their work contributes to the finished product.',
+   'Autonomy has been fully addressed because operators choose which shirt to assemble from the production queue.'],
+c:[0,1,3,5]},
+
+/* ── Q9: STS — ANALYTICAL SCENARIO ──────────────────────── */
+{n:9,t:'STS Theory — Application',
+sc:'A call-centre introduces an AI routing system that automatically assigns calls to agents based on skill tags, removing agents\' discretion to choose call types. After three months, quality scores fall, absenteeism rises, and senior agents report feeling "de-skilled".',
+q:'Analysing this situation through Sociotechnical Systems (STS) theory, which of the following conclusions are valid?',
+o:['The AI routing system optimised the technical sub-system (call distribution efficiency) while damaging the social sub-system (agent skill, discretion, and morale) — a classic failure of joint optimisation.',
+   'The fall in quality scores suggests that variance (call complexity) is no longer being controlled at the point where it occurs — the agent — but is instead being mis-routed by the algorithm.',
+   'STS theory would recommend removing the AI system entirely, as technology is always detrimental to the social system.',
+   'The loss of discretion over call-type selection represents an erosion of the semi-autonomous work principle central to STS design.',
+   'Rising absenteeism is unrelated to STS concerns — it is purely an HR issue to be addressed through attendance policy.',
+   'An STS-informed redesign would seek to give agents meaningful control over task allocation while retaining the efficiency gains of AI routing.',
+   'The "de-skilling" reported by senior agents aligns with what STS scholars call the degradation of the social system when technological logic overrides human judgment.'],
+c:[0,1,3,5,6]},
+
+/* ── Q10: Appreciative Inquiry ───────────────────────────── */
+{n:10,t:'Appreciative Inquiry',sc:null,
+q:'Which statements accurately describe Cooperrider & Srivastva\'s Appreciative Inquiry 4-D cycle and its philosophical assumptions?',
+o:['Discovery involves identifying and amplifying the organisation\'s existing strengths and life-giving forces.',
+   'AI begins with deficit analysis, identifying root causes before moving to solutions.',
+   'Dream involves collective envisioning of what the organisation could become at its best.',
+   'Design translates the dream into actionable "social architecture" — structures and processes.',
+   'Destiny focuses on sustaining and institutionalising positive change through ongoing action.',
+   'AI\'s core assumption is that organisations are problems to be solved rather than mysteries to appreciate.',
+   'AI draws on social constructionism — what we study and discuss shapes organisational reality.'],
+c:[0,2,3,4,6]},
+
+/* ── Q11: Positive Deviance ──────────────────────────────── */
+{n:11,t:'Positive Deviance',sc:null,
+q:'Which statements correctly describe the Positive Deviance (PD) approach?',
+o:['PD identifies individuals or groups who succeed against the odds using only commonly available resources.',
+   'Solutions in PD are designed by external experts importing best practices from elsewhere.',
+   'PD is premised on the belief that solutions usually already exist within the community itself.',
+   'The approach was applied successfully to childhood malnutrition in rural Vietnam in the 1990s.',
+   'PD assumes most community members lack the knowledge to solve their own problems.',
+   'PD aligns with Gandhian Sarvodaya by seeking solutions from the grassroots rather than imposing them.',
+   'PD requires significant external financial investment to scale positive deviant practices.'],
+c:[0,2,3,5]},
+
+/* ── Q12: Burke–Litwin — ANALYTICAL SCENARIO ────────────── */
+{n:12,t:'Burke–Litwin Model — Application',
+sc:'A regional bank has launched a new "customer-first" strategy. The CEO has publicly championed this, culture surveys show improving scores, and new customer-service training has been rolled out. Yet branch managers still evaluate tellers primarily on transaction speed, and the incentive system has not changed.',
+q:'Using the Burke–Litwin Causal Model, which analytical judgements are correct?',
+o:['The mismatch between the stated strategy and the unchanged management practices/reward systems represents a misalignment between transformational and transactional factors.',
+   'Because the CEO is visibly championing the change, the transformational leadership factor is fully aligned and requires no further attention.',
+   'The existing incentive system — a transactional factor — is actively reinforcing old behaviour and will undermine the transformational intent of the strategy.',
+   'Culture is shifting (survey scores improving), but without realigning management practices, the culture change is unlikely to be sustained.',
+   'Burke–Litwin would predict that changing training (a transactional factor) alone will be sufficient to produce the desired strategic transformation.',
+   'The branch managers\' performance criteria represent a misaligned "management practices" factor that must be changed for the strategy to take hold.',
+   'External environment pressure (competitive banking market) is irrelevant to this Burke–Litwin analysis.'],
+c:[0,2,3,5]},
+
+/* ── Q13: ADKAR — ANALYTICAL SCENARIO ───────────────────── */
+{n:13,t:'ADKAR Model — Application',
+sc:'A university introduces a mandatory digital assessment platform. Faculty have been sent emails explaining the rationale. IT has delivered three training workshops. Yet six months later, 60% of faculty still submit paper-based assessments, citing "no reason to change" and "the old system works fine".',
+q:'Applying the ADKAR model to diagnose this change failure, which conclusions are analytically sound?',
+o:['The primary gap is Desire — faculty may be Aware of the change but have not been given reasons compelling enough to motivate personal engagement with it.',
+   'The problem is primarily Knowledge — faculty have not received enough training workshops to use the platform.',
+   'Sending emails alone is insufficient to build genuine Awareness of why the change is necessary and what the consequences of non-adoption are.',
+   'The ADKAR model implies that strengthening Reinforcement (consequences for non-compliance) would now be the most logical next step.',
+   'Because training (Knowledge) has been provided, the ADKAR model confirms the change is progressing normally.',
+   'A deeper diagnosis is needed: the "no reason to change" sentiment signals that Desire — not Knowledge or Ability — is the broken link in the ADKAR chain.',
+   'ADKAR suggests that organisational change fails when any single building block is weak — here, Desire is clearly the critical gap that renders subsequent stages ineffective.'],
+c:[0,2,5,6]},
+
+/* ── Q14: Cummings & Worley — ANALYTICAL SCENARIO ───────── */
+{n:14,t:'Cummings & Worley — Intervention Selection',
+sc:'An Indian pharmaceutical company faces three simultaneous challenges: (a) high interpersonal conflict between R&D and Marketing teams; (b) assembly-line jobs so fragmented that workers report meaninglessness and make errors; (c) the HR department\'s appraisal system is perceived as unfair and demotivating.',
+q:'Applying Cummings & Worley\'s intervention taxonomy, which analytical judgements about intervention selection are correct?',
+o:['Challenge (a) — interpersonal conflict — calls for a human process intervention, specifically third-party conflict resolution or team building.',
+   'Challenge (b) — fragmented, meaningless jobs — calls for a technostructural intervention, specifically job redesign using the Hackman–Oldham JCM or STS work restructuring.',
+   'Challenge (c) — unfair appraisal system — calls for a technostructural intervention, since appraisals involve structural redesign of reporting lines.',
+   'Using the same intervention type for all three challenges would be analytically incorrect — each challenge requires a different category of intervention.',
+   'Challenge (b) could also be addressed through a human process intervention such as team building, since team dynamics drive errors.',
+   'Challenge (c) — demotivating appraisal — calls for an HRM intervention targeting the performance management and reward system.',
+   'If the conflicts in (a) stem from a deeper misalignment in organisational mission and strategy, a strategic intervention might be required upstream of the process intervention.'],
+c:[0,1,3,5,6]},
+
+/* ── Q15: Gandhian OD ────────────────────────────────────── */
+{n:15,t:'Gandhian OD Principles',sc:null,
+q:'Which statements accurately connect Gandhian principles to OD theory and practice, including chronological positioning?',
+o:['Satyagraha provides an ethical foundation for OD — including courageous diagnostic feedback — predating Lewin\'s work.',
+   'Sarvodaya anticipates stakeholder theory by decades, requiring interventions to benefit all, not just dominant stakeholders.',
+   'Gandhian principles were derived from Western scientific management and are supplementary to OD.',
+   'Trusteeship positions leaders as stewards holding resources on behalf of all stakeholders — anticipating servant leadership.',
+   'Non-violence (Ahimsa) has no relevance to organisational conflict resolution.',
+   'Gram Swarajya reflects decentralisation and grassroots empowerment central to participative OD.',
+   'Vedantic systems thinking — interconnectedness (Atman-Brahman) — predates Open Systems Theory (1950s).'],
+c:[0,1,3,5,6]}
 ];
 
-// ── INIT ─────────────────────────────────────────────────────────
-window.onload = function() {
-  if (localStorage.getItem(KEY)) { already(); return; }
+// ── STATE ─────────────────────────────────────────────────────
+window.onload=function(){
+  if(localStorage.getItem(KEY)){already();return;}
   loadRoster();
 };
 
-// ── LOAD DROPDOWN FROM Student_Roster ───────────────────────────
-function loadRoster() {
-  var sel   = document.getElementById('iname');
-  var hint  = document.getElementById('rosterhint');
-  fetch(LOGGER_URL + '?action=getstudents')
-    .then(function(r){ return r.json(); })
+function loadRoster(){
+  var sel=document.getElementById('iname'),hint=document.getElementById('rosterhint');
+  fetch(LOGGER_URL+'?action=getstudents')
+    .then(function(r){return r.json();})
     .then(function(d){
-      rosterData = d.students || [];
-      sel.innerHTML = '<option value="">— Select your name —</option>';
-      rosterData.forEach(function(s, i){
-        var o = document.createElement('option');
-        o.value = i;
-        o.textContent = s.name + (s.rollNo ? '  (' + s.rollNo + ')' : '');
+      rosterData=d.students||[];
+      sel.innerHTML='<option value="">— Select your name —</option>';
+      rosterData.forEach(function(s,i){
+        var o=document.createElement('option');
+        o.value=i;
+        o.textContent=s.name+(s.rollNo?' ('+s.rollNo+')':'');
         sel.appendChild(o);
       });
-      hint.textContent = rosterData.length + ' students loaded from Student_Roster.';
-      document.getElementById('startbtn').disabled = false;
+      hint.textContent=rosterData.length+' students loaded from Student_Roster.';
+      document.getElementById('startbtn').disabled=false;
     })
     .catch(function(){
-      // Fallback to text input if fetch fails
-      sel.outerHTML = '<input type="text" id="iname" placeholder="Type your full name" autocomplete="off" style="width:100%;border:1.5px solid var(--bdr);border-radius:4px;padding:.7rem 1rem;font-size:1rem;outline:none;"/>';
-      hint.textContent = 'Could not load roster — type your name manually.';
-      document.getElementById('startbtn').disabled = false;
+      sel.outerHTML='<input type="text" id="iname" placeholder="Type your full name" autocomplete="off" style="width:100%;border:1.5px solid rgba(26,20,16,.12);border-radius:4px;padding:.7rem 1rem;font-size:1rem;outline:none;"/>';
+      hint.textContent='Could not load roster — type your name manually.';
+      document.getElementById('startbtn').disabled=false;
     });
 }
 
-function already() {
-  document.getElementById('entry').style.display = 'none';
-  document.getElementById('rwrap').style.display = 'block';
-  document.getElementById('fscore').textContent = '—';
-  document.getElementById('fband').textContent = 'Already Submitted';
-  document.getElementById('fband').className = 'gb gB';
-  document.getElementById('fmeta').textContent = 'You have already submitted this assessment.';
-  document.getElementById('fmsg').textContent = 'Each student may attempt this quiz only once.';
+function already(){
+  document.getElementById('entry').style.display='none';
+  document.getElementById('rwrap').style.display='block';
+  document.getElementById('fscore').textContent='—';
+  document.getElementById('fband').textContent='Already Submitted';
+  document.getElementById('fband').className='gb gB';
+  document.getElementById('fmeta').textContent='You have already submitted this assessment.';
+  document.getElementById('fmsg').textContent='Each student may attempt this quiz only once.';
 }
 
-// ── BEGIN QUIZ ───────────────────────────────────────────────────
-function go() {
-  var sel  = document.getElementById('iname');
-  var em   = document.getElementById('iemail').value.trim();
-  var er   = document.getElementById('err');
-  er.style.display = 'none';
-
-  // Resolve name
-  var name = '';
-  if (sel.tagName === 'SELECT') {
-    if (!sel.value) { er.textContent = 'Please select your name from the list.'; er.style.display='block'; return; }
-    name = rosterData[parseInt(sel.value)].name;
+function go(){
+  var sel=document.getElementById('iname'),em=document.getElementById('iemail').value.trim(),er=document.getElementById('err');
+  er.style.display='none';
+  var name='';
+  if(sel.tagName==='SELECT'){
+    if(!sel.value){er.textContent='Please select your name.';er.style.display='block';return;}
+    name=rosterData[parseInt(sel.value)].name;
   } else {
-    name = sel.value.trim();
-    if (name.length < 3) { er.textContent = 'Please enter your full name.'; er.style.display='block'; return; }
+    name=sel.value.trim();
+    if(name.length<3){er.textContent='Please enter your full name.';er.style.display='block';return;}
   }
-  if (!em || !em.includes('@')) { er.textContent = 'Please enter a valid email address.'; er.style.display='block'; return; }
-
-  sname = name; semail = em;
-  document.getElementById('entry').style.display = 'none';
-  document.getElementById('instr').style.display = 'block';
-  document.getElementById('qbody').style.display = 'block';
-  document.getElementById('subrow').style.display = 'block';
-  build(); tick();
+  if(!em||!em.includes('@')){er.textContent='Please enter a valid email address.';er.style.display='block';return;}
+  sname=name;semail=em;
+  document.getElementById('entry').style.display='none';
+  document.getElementById('instr').style.display='block';
+  document.getElementById('qbody').style.display='block';
+  document.getElementById('subrow').style.display='block';
+  build();tick();
 }
 
-function build() {
-  var w = document.getElementById('qbody'); w.innerHTML = '';
-  QS.forEach(function(q, qi){
-    var d = document.createElement('div'); d.className = 'qcard'; d.style.animationDelay = (qi*.04)+'s';
-    d.innerHTML = '<div class="qh"><span class="qn">Q'+q.n+'</span><span class="qt">'+q.t+'</span></div><div class="qtxt">'+q.q+'</div><div class="opts">'
-      + q.o.map(function(o,oi){ return '<label class="ol" id="lb_'+qi+'_'+oi+'"><input type="checkbox" id="op_'+qi+'_'+oi+'"/><span>'+o+'</span></label>'; }).join('')
-      + '</div>';
+function build(){
+  var w=document.getElementById('qbody');w.innerHTML='';
+  QS.forEach(function(q,qi){
+    var d=document.createElement('div');d.className='qcard';d.style.animationDelay=(qi*.04)+'s';
+    var scenarioHTML=q.sc?'<div class="scenario"><strong>Scenario:</strong> '+q.sc+'</div>':'';
+    d.innerHTML='<div class="qh"><span class="qn">Q'+q.n+'</span><span class="qt">'+q.t+'</span></div>'
+      +scenarioHTML
+      +'<div class="qtxt">'+q.q+'</div>'
+      +'<div class="opts">'+q.o.map(function(o,oi){
+        return '<label class="ol" id="lb_'+qi+'_'+oi+'"><input type="checkbox" id="op_'+qi+'_'+oi+'"/><span>'+o+'</span></label>';
+      }).join('')+'</div>';
     w.appendChild(d);
   });
 }
 
-function tick() {
-  var bar = document.getElementById('tbar'), dp = document.getElementById('tdisp');
+function tick(){
+  var bar=document.getElementById('tbar'),dp=document.getElementById('tdisp');
   bar.classList.add('on');
-  tiv = setInterval(function(){
+  tiv=setInterval(function(){
     tleft--;
-    var m = Math.floor(tleft/60), s = tleft%60;
-    dp.textContent = m + ':' + (s<10?'0':'') + s;
-    if (tleft <= 120) bar.classList.add('warn');
-    if (tleft <= 0) { clearInterval(tiv); sub(true); }
-  }, 1000);
+    var m=Math.floor(tleft/60),s=tleft%60;
+    dp.textContent=m+':'+(s<10?'0':'')+s;
+    if(tleft<=120)bar.classList.add('warn');
+    if(tleft<=0){clearInterval(tiv);sub(true);}
+  },1000);
 }
 
-function calc() {
-  var tot = 0, res = [];
-  QS.forEach(function(q, qi){
-    var k = 2/q.c.length, ch = [];
-    q.o.forEach(function(_,oi){ var el=document.getElementById('op_'+qi+'_'+oi); if(el&&el.checked) ch.push(oi); });
-    var raw = 0;
-    ch.forEach(function(oi){ raw += q.c.indexOf(oi)>=0 ? k : -k; });
-    q.c.forEach(function(ci){ if(ch.indexOf(ci)<0) raw -= k; });
-    raw = Math.max(0,raw); tot += raw; res.push({ch:ch});
+function calc(){
+  var tot=0,res=[];
+  QS.forEach(function(q,qi){
+    var k=2/q.c.length,ch=[];
+    q.o.forEach(function(_,oi){var el=document.getElementById('op_'+qi+'_'+oi);if(el&&el.checked)ch.push(oi);});
+    var raw=0;
+    ch.forEach(function(oi){raw+=q.c.indexOf(oi)>=0?k:-k;});
+    q.c.forEach(function(ci){if(ch.indexOf(ci)<0)raw-=k;});
+    raw=Math.max(0,raw);tot+=raw;res.push({ch:ch});
   });
-  return { sc: Math.round(tot*10)/10, res: res };
+  return{sc:Math.round(tot*10)/10,res:res};
 }
 
-function sub(auto) {
-  if (done) return; done = true; auto = auto||false;
+function sub(auto){
+  if(done)return;done=true;auto=auto||false;
   clearInterval(tiv);
-  document.getElementById('tbar').style.display = 'none';
-  document.getElementById('subrow').style.display = 'none';
-  var r = calc(), sc = r.sc, res = r.res;
-  var pct = Math.round(sc/30*100), tt = DUR-tleft;
-
+  document.getElementById('tbar').style.display='none';
+  document.getElementById('subrow').style.display='none';
+  var r=calc(),sc=r.sc,res=r.res;
+  var pct=Math.round(sc/30*100),tt=DUR-tleft;
   QS.forEach(function(q,qi){
     q.o.forEach(function(_,oi){
-      var lb=document.getElementById('lb_'+qi+'_'+oi), ip=document.getElementById('op_'+qi+'_'+oi);
-      if(!lb||!ip) return; ip.disabled=true;
-      var ch=res[qi].ch.indexOf(oi)>=0, cr=q.c.indexOf(oi)>=0;
-      if(ch&&cr) lb.classList.add('cc');
-      else if(ch&&!cr) lb.classList.add('wc');
-      else if(!ch&&cr) lb.classList.add('mc');
+      var lb=document.getElementById('lb_'+qi+'_'+oi),ip=document.getElementById('op_'+qi+'_'+oi);
+      if(!lb||!ip)return;ip.disabled=true;
+      var ch=res[qi].ch.indexOf(oi)>=0,cr=q.c.indexOf(oi)>=0;
+      if(ch&&cr)lb.classList.add('cc');
+      else if(ch&&!cr)lb.classList.add('wc');
+      else if(!ch&&cr)lb.classList.add('mc');
     });
   });
-
-  var band, bc;
+  var band,bc;
   if(pct>=85){band='O — Outstanding';bc='gO';}
   else if(pct>=70){band='A — Excellent';bc='gA';}
   else if(pct>=55){band='B — Satisfactory';bc='gB';}
   else{band='C — Needs Development';bc='gC';}
-
-  document.getElementById('rwrap').style.display = 'block';
-  document.getElementById('fscore').textContent = sc+'/30';
-  var fb = document.getElementById('fband'); fb.textContent = band; fb.className = 'gb '+bc;
-  document.getElementById('fmeta').textContent = sc+' / 30  ·  '+pct+'%  ·  Time: '+Math.floor(tt/60)+'m '+(tt%60)+'s'+(auto?' (auto-submitted)':'');
-  document.getElementById('fmsg').textContent = 'Saving result…';
+  document.getElementById('rwrap').style.display='block';
+  document.getElementById('fscore').textContent=sc+'/30';
+  var fb=document.getElementById('fband');fb.textContent=band;fb.className='gb '+bc;
+  document.getElementById('fmeta').textContent=sc+' / 30  ·  '+pct+'%  ·  Time: '+Math.floor(tt/60)+'m '+(tt%60)+'s'+(auto?' (auto-submitted)':'');
+  document.getElementById('fmsg').textContent='Saving result…';
   document.getElementById('rwrap').scrollIntoView({behavior:'smooth'});
   localStorage.setItem(KEY,'1');
-
-  var payload = { quiz:'DSEH002_FullSyllabus', name:sname, email:semail, score:sc, max:30, pct:pct, gradeBand:band, timeTaken:tt, autoSubmit:auto?'Yes':'No' };
-  QS.forEach(function(q,qi){ payload['Q'+q.n+'_chosen']=res[qi].ch.join(','); payload['Q'+q.n+'_correct']=q.c.join(','); });
-
-  fetch(LOGGER_URL, { method:'POST', body:JSON.stringify(payload) })
-    .then(function(r){ return r.text(); })
+  var payload={quiz:'DSEH002_FullSyllabus',name:sname,email:semail,score:sc,max:30,pct:pct,gradeBand:band,timeTaken:tt,autoSubmit:auto?'Yes':'No'};
+  QS.forEach(function(q,qi){payload['Q'+q.n+'_chosen']=res[qi].ch.join(',');payload['Q'+q.n+'_correct']=q.c.join(',');});
+  fetch(LOGGER_URL,{method:'POST',body:JSON.stringify(payload)})
+    .then(function(r){return r.text();})
     .then(function(t){
-      try {
-        var d = JSON.parse(t);
-        var m = '✓ Result recorded.';
-        if (d.emailSent==='Yes') m += ' Feedback emailed to '+semail+'.';
-        document.getElementById('fmsg').textContent = m;
-      } catch(e) { document.getElementById('fmsg').textContent = '✓ Result submitted.'; }
+      try{var d=JSON.parse(t);var m='✓ Result recorded.';if(d.emailSent==='Yes')m+=' Feedback emailed to '+semail+'.';document.getElementById('fmsg').textContent=m;}
+      catch(e){document.getElementById('fmsg').textContent='✓ Result submitted.';}
     })
-    .catch(function(){ document.getElementById('fmsg').textContent = '⚠ Could not reach server. Inform your instructor.'; });
+    .catch(function(){document.getElementById('fmsg').textContent='⚠ Could not reach server. Inform your instructor.';});
 }
 </script>
 </body>
