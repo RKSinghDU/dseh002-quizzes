@@ -96,11 +96,10 @@ select.name-input{cursor:pointer;appearance:none;background-image:url("data:imag
 
 <div class="timer-bar" id="timerBar">⏱ Time remaining: <span id="timerDisplay">15:00</span></div>
 
-<!-- NAME + EMAIL ENTRY SCREEN -->
 <div class="screen" id="nameScreen">
   <div class="screen-card">
     <h2>Begin Assessment</h2>
-    <p>Select your name and enter your email address. Your result and personalised feedback will be sent to you on submission.</p>
+    <p>Select your name and enter your email. Your result and feedback will be emailed to you on submission.</p>
 
     <label class="field-label" for="studentSelect">Your Name</label>
     <select id="studentSelect" class="name-input">
@@ -157,8 +156,8 @@ const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwdKzg4KDxohvhyYEQOPjo
 const QUIZ_DURATION_SEC=15*60;
 const STORAGE_KEY='dseh002_fullsyllabus_v1_submitted';
 
-let rosterData=[], studentName='', studentEmail='';
-let timerInterval=null, timeLeft=QUIZ_DURATION_SEC, submitted=false;
+let rosterData=[],studentName='',studentEmail='';
+let timerInterval=null,timeLeft=QUIZ_DURATION_SEC,submitted=false;
 
 const QUESTIONS=[
 {num:1,topic:'OD Foundations',text:'Which of the following statements accurately describe the philosophical and methodological foundations of Organizational Development (OD)?',opts:['OD is grounded in humanistic values emphasising human dignity, equality, and democratic participation.','Action research — a cyclical process of diagnosis, intervention, and evaluation — is a defining OD methodology.','OD operates exclusively at the individual level and does not address system-level dynamics.','OD emerged primarily from industrial engineering and treats human behaviour as a variable to be optimised.','Gandhian Trusteeship anticipates OD\'s stakeholder orientation by positioning leaders as stewards of collective wellbeing.','Planned change at the organisation-wide level, guided by a change agent, is a hallmark of OD.','OD is a one-time event rather than an iterative, data-driven process.'],c:[0,1,4,5]},
@@ -178,212 +177,183 @@ const QUESTIONS=[
 {num:15,topic:'Gandhian Philosophy & OD',text:'Which of the following statements accurately connect Gandhian philosophical principles to OD theory and practice, including their chronological positioning relative to Western OD models?',opts:['Satyagraha (truth-force / non-violent pursuit of justice) provides an ethical foundation for OD practice — including courageous diagnostic feedback — predating Lewin\'s field theory work.','Sarvodaya (welfare of all) anticipates stakeholder theory by decades, demanding that OD interventions be evaluated by their benefit to all members of the system, not just dominant stakeholders.','Gandhian principles were derived from Western scientific management theory and are therefore supplementary to — not foundational for — OD.','Trusteeship positions organisational leaders as stewards who hold resources on behalf of all stakeholders — a formulation that directly anticipates servant leadership and stewardship theory.','Non-violence (Ahimsa) has no relevance to organisational conflict resolution, as it is a political rather than organisational concept.','Gram Swarajya (village self-governance) reflects decentralisation and grassroots empowerment principles central to participative OD and self-managed team designs.','Vedantic systems thinking — rooted in the principle of interconnectedness (Atman-Brahman unity) — predates Western Open Systems Theory (1950s) and provides a philosophical foundation for seeing organisations as living wholes.'],c:[0,1,3,5,6]}
 ];
 
-// ── LOAD ─────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  if (localStorage.getItem(STORAGE_KEY)) { showAlreadySubmitted(); return; }
+window.addEventListener('load',()=>{
+  if(localStorage.getItem(STORAGE_KEY)){showAlreadySubmitted();return;}
   loadRoster();
 });
 
-function loadRoster() {
-  const sel = document.getElementById('studentSelect');
-  const st  = document.getElementById('rosterStatus');
-  fetch(SCRIPT_URL + '?action=getstudents')
-    .then(r => r.json())
-    .then(d => {
-      rosterData = d.students || [];
-      sel.innerHTML = '<option value="">— Select your name —</option>';
-      rosterData.forEach((s, i) => {
-        const o = document.createElement('option');
-        o.value = i;
-        o.textContent = s.name + (s.rollNo ? '  (' + s.rollNo + ')' : '');
+function loadRoster(){
+  const sel=document.getElementById('studentSelect');
+  const st=document.getElementById('rosterStatus');
+  fetch(SCRIPT_URL+'?action=getstudents')
+    .then(r=>r.json()).then(d=>{
+      rosterData=d.students||[];
+      sel.innerHTML='<option value="">— Select your name —</option>';
+      rosterData.forEach((s,i)=>{
+        const o=document.createElement('option');
+        o.value=i;
+        o.textContent=s.name+(s.rollNo?' ('+s.rollNo+')':'');
         sel.appendChild(o);
       });
-      st.textContent = rosterData.length + ' students loaded.';
-      document.getElementById('startBtn').disabled = false;
-    })
-    .catch(() => {
-      // Fallback: free-text if roster unavailable
-      sel.outerHTML = '<input type="text" id="studentSelect" class="name-input" placeholder="Type your full name" autocomplete="off"/>';
-      st.textContent = 'Could not load roster — type your name manually.';
-      document.getElementById('startBtn').disabled = false;
+      st.textContent=rosterData.length+' students loaded.';
+      document.getElementById('startBtn').disabled=false;
+    }).catch(()=>{
+      sel.outerHTML='<input type="text" id="studentSelect" class="name-input" placeholder="Type your full name" autocomplete="off"/>';
+      st.textContent='Could not load roster — type your name manually.';
+      document.getElementById('startBtn').disabled=false;
     });
 }
 
-// ── ALREADY SUBMITTED ────────────────────────────────────────
-function showAlreadySubmitted() {
-  document.getElementById('nameScreen').style.display = 'none';
-  document.getElementById('resultsPanel').style.display = 'block';
-  document.getElementById('finalScore').textContent = '—';
-  document.getElementById('gradeBandBadge').textContent = 'Already Submitted';
-  document.getElementById('gradeBandBadge').className = 'grade-band grade-B';
-  document.getElementById('resultMeta').textContent = 'You have already submitted this assessment.';
-  document.getElementById('statusMsg').textContent = 'Each student may attempt this quiz only once.';
+function showAlreadySubmitted(){
+  document.getElementById('nameScreen').style.display='none';
+  document.getElementById('resultsPanel').style.display='block';
+  document.getElementById('finalScore').textContent='—';
+  document.getElementById('gradeBandBadge').textContent='Already Submitted';
+  document.getElementById('gradeBandBadge').className='grade-band grade-B';
+  document.getElementById('resultMeta').textContent='You have already submitted this assessment.';
+  document.getElementById('statusMsg').textContent='Each student may attempt this quiz only once.';
 }
 
-// ── START ────────────────────────────────────────────────────
-function startQuiz() {
-  const sel   = document.getElementById('studentSelect');
-  const email = document.getElementById('studentEmail').value.trim();
-  const errEl = document.getElementById('nameError');
-  errEl.style.display = 'none';
-
-  // Resolve name from dropdown or text input
-  let name = '';
-  if (sel.tagName === 'SELECT') {
-    if (sel.value === '') {
-      errEl.textContent = 'Please select your name from the list.';
-      errEl.style.display = 'block'; return;
-    }
-    name = rosterData[parseInt(sel.value)].name;
+function startQuiz(){
+  const sel=document.getElementById('studentSelect');
+  const email=document.getElementById('studentEmail').value.trim();
+  const errEl=document.getElementById('nameError');
+  errEl.style.display='none';
+  let name='';
+  if(sel.tagName==='SELECT'){
+    if(sel.value===''){errEl.textContent='Please select your name.';errEl.style.display='block';return;}
+    name=rosterData[parseInt(sel.value)].name;
   } else {
-    name = sel.value.trim();
-    if (name.length < 3) {
-      errEl.textContent = 'Please enter your full name.';
-      errEl.style.display = 'block'; return;
-    }
+    name=sel.value.trim();
+    if(name.length<3){errEl.textContent='Please enter your full name.';errEl.style.display='block';return;}
   }
-
-  // Email is always typed by the student — no auto-fill
-  if (!email || !email.includes('@')) {
-    errEl.textContent = 'Please enter a valid email address.';
-    errEl.style.display = 'block'; return;
-  }
-
-  document.getElementById('startBtn').disabled = true;
-  document.getElementById('startBtn').textContent = 'Checking…';
-
-  fetch(SCRIPT_URL + '?action=checkName&name=' + encodeURIComponent(name) + '&quiz=fullsyllabus')
-    .then(r => r.json())
-    .then(d => {
-      if (d.exists) {
-        errEl.textContent = 'This name has already submitted the quiz. Each student may attempt only once.';
-        errEl.style.display = 'block';
-        document.getElementById('startBtn').disabled = false;
-        document.getElementById('startBtn').textContent = 'Begin Quiz →';
-      } else {
-        studentName  = name;
-        studentEmail = email;   // always the student's own typed email
-        launch();
-      }
-    })
-    .catch(() => {
-      studentName = name; studentEmail = email; launch();
-    });
+  if(!email||!email.includes('@')){errEl.textContent='Please enter a valid email address.';errEl.style.display='block';return;}
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('startBtn').textContent='Checking…';
+  fetch(SCRIPT_URL+'?action=checkname&name='+encodeURIComponent(name)+'&quiz=fullsyllabus')
+    .then(r=>r.json()).then(d=>{
+      if(d.exists){
+        errEl.textContent='This name has already submitted. Each student may attempt only once.';
+        errEl.style.display='block';
+        document.getElementById('startBtn').disabled=false;
+        document.getElementById('startBtn').textContent='Begin Quiz →';
+      } else { studentName=name;studentEmail=email;launch(); }
+    }).catch(()=>{studentName=name;studentEmail=email;launch();});
 }
 
-function launch() {
-  document.getElementById('nameScreen').style.display = 'none';
-  document.getElementById('instrPanel').style.display = 'block';
-  document.getElementById('quizBody').style.display = 'block';
-  document.getElementById('submitRow').style.display = 'block';
-  renderQuiz(); startTimer();
+function launch(){
+  document.getElementById('nameScreen').style.display='none';
+  document.getElementById('instrPanel').style.display='block';
+  document.getElementById('quizBody').style.display='block';
+  document.getElementById('submitRow').style.display='block';
+  renderQuiz();startTimer();
 }
 
-// ── RENDER ───────────────────────────────────────────────────
-function renderQuiz() {
-  const c = document.getElementById('quizBody'); c.innerHTML = '';
-  QUESTIONS.forEach((q, qi) => {
-    const card = document.createElement('div');
-    card.className = 'question-card';
-    card.style.animationDelay = (qi * .05) + 's';
-    card.innerHTML = `<div class="q-header"><span class="q-num">Q${q.num}</span><span class="q-topic">${q.topic}</span></div><div class="q-text">${q.text}</div><div class="options-grid">${q.opts.map((o,oi)=>`<label class="option-label" id="lbl_${qi}_${oi}"><input type="checkbox" id="opt_${qi}_${oi}"/><span>${o}</span></label>`).join('')}</div>`;
+function renderQuiz(){
+  const c=document.getElementById('quizBody');c.innerHTML='';
+  QUESTIONS.forEach((q,qi)=>{
+    const card=document.createElement('div');
+    card.className='question-card';card.style.animationDelay=(qi*.05)+'s';
+    card.innerHTML=`<div class="q-header"><span class="q-num">Q${q.num}</span><span class="q-topic">${q.topic}</span></div><div class="q-text">${q.text}</div><div class="options-grid">${q.opts.map((o,oi)=>`<label class="option-label" id="lbl_${qi}_${oi}"><input type="checkbox" id="opt_${qi}_${oi}"/><span>${o}</span></label>`).join('')}</div>`;
     c.appendChild(card);
   });
 }
 
-// ── TIMER ────────────────────────────────────────────────────
-function startTimer() {
-  const bar = document.getElementById('timerBar'), disp = document.getElementById('timerDisplay');
+function startTimer(){
+  const bar=document.getElementById('timerBar'),disp=document.getElementById('timerDisplay');
   bar.classList.add('active');
-  timerInterval = setInterval(() => {
+  timerInterval=setInterval(()=>{
     timeLeft--;
-    const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
-    disp.textContent = m + ':' + (s < 10 ? '0' : '') + s;
-    if (timeLeft <= 120) bar.classList.add('warning');
-    if (timeLeft <= 0) { clearInterval(timerInterval); submitQuiz(true); }
-  }, 1000);
+    const m=Math.floor(timeLeft/60),s=timeLeft%60;
+    disp.textContent=m+':'+(s<10?'0':'')+s;
+    if(timeLeft<=120)bar.classList.add('warning');
+    if(timeLeft<=0){clearInterval(timerInterval);submitQuiz(true);}
+  },1000);
 }
 
-// ── SCORE ────────────────────────────────────────────────────
-function calcScore() {
-  let total = 0; const results = [];
-  QUESTIONS.forEach((q, qi) => {
-    const k = 2 / q.c.length, chosen = [];
-    q.opts.forEach((_, oi) => { if (document.getElementById('opt_' + qi + '_' + oi)?.checked) chosen.push(oi); });
-    let raw = 0;
-    chosen.forEach(oi => { raw += q.c.includes(oi) ? k : -k; });
-    q.c.forEach(ci => { if (!chosen.includes(ci)) raw -= k; });
-    raw = Math.max(0, raw); total += raw; results.push({ chosen, k });
+function calcScore(){
+  let total=0;const results=[];
+  QUESTIONS.forEach((q,qi)=>{
+    const k=2/q.c.length,chosen=[];
+    q.opts.forEach((_,oi)=>{if(document.getElementById('opt_'+qi+'_'+oi)?.checked)chosen.push(oi);});
+    let raw=0;
+    chosen.forEach(oi=>{raw+=q.c.includes(oi)?k:-k;});
+    q.c.forEach(ci=>{if(!chosen.includes(ci))raw-=k;});
+    raw=Math.max(0,raw);total+=raw;results.push({chosen,k});
   });
-  return { score: Math.round(total * 10) / 10, results };
+  return{score:Math.round(total*10)/10,results};
 }
 
-// ── SUBMIT ───────────────────────────────────────────────────
-function submitQuiz(auto = false) {
-  if (submitted) return; submitted = true;
+function submitQuiz(auto=false){
+  if(submitted)return;submitted=true;
   clearInterval(timerInterval);
-  document.getElementById('timerBar').style.display = 'none';
-  document.getElementById('submitRow').style.display = 'none';
+  document.getElementById('timerBar').style.display='none';
+  document.getElementById('submitRow').style.display='none';
+  const{score,results}=calcScore();
+  const pct=Math.round(score/30*100),timeTaken=QUIZ_DURATION_SEC-timeLeft;
 
-  const { score, results } = calcScore();
-  const pct = Math.round(score / 30 * 100), timeTaken = QUIZ_DURATION_SEC - timeLeft;
-
-  QUESTIONS.forEach((q, qi) => {
-    q.opts.forEach((_, oi) => {
-      const lbl = document.getElementById('lbl_' + qi + '_' + oi);
-      const inp = document.getElementById('opt_' + qi + '_' + oi);
-      if (!lbl || !inp) return; inp.disabled = true;
-      const cho = results[qi].chosen.includes(oi), cor = q.c.includes(oi);
-      if (cho && cor) lbl.classList.add('correct-chosen');
-      else if (cho && !cor) lbl.classList.add('wrong-chosen');
-      else if (!cho && cor) lbl.classList.add('missed-correct');
+  QUESTIONS.forEach((q,qi)=>{
+    q.opts.forEach((_,oi)=>{
+      const lbl=document.getElementById('lbl_'+qi+'_'+oi);
+      const inp=document.getElementById('opt_'+qi+'_'+oi);
+      if(!lbl||!inp)return;inp.disabled=true;
+      const cho=results[qi].chosen.includes(oi),cor=q.c.includes(oi);
+      if(cho&&cor)lbl.classList.add('correct-chosen');
+      else if(cho&&!cor)lbl.classList.add('wrong-chosen');
+      else if(!cho&&cor)lbl.classList.add('missed-correct');
     });
   });
 
-  let band, bc;
-  if (pct >= 85)      { band = 'O — Outstanding';      bc = 'grade-O'; }
-  else if (pct >= 70) { band = 'A — Excellent';         bc = 'grade-A'; }
-  else if (pct >= 55) { band = 'B — Satisfactory';      bc = 'grade-B'; }
-  else                { band = 'C — Needs Development'; bc = 'grade-C'; }
+  let band,bc;
+  if(pct>=85){band='O — Outstanding';bc='grade-O';}
+  else if(pct>=70){band='A — Excellent';bc='grade-A';}
+  else if(pct>=55){band='B — Satisfactory';bc='grade-B';}
+  else{band='C — Needs Development';bc='grade-C';}
 
-  document.getElementById('resultsPanel').style.display = 'block';
-  document.getElementById('finalScore').textContent = score + '/30';
-  const badge = document.getElementById('gradeBandBadge');
-  badge.textContent = band; badge.className = 'grade-band ' + bc;
-  document.getElementById('resultMeta').textContent =
-    score + ' out of 30 · ' + pct + '% · Time: ' +
-    Math.floor(timeTaken / 60) + 'm ' + (timeTaken % 60) + 's' + (auto ? ' (auto-submitted)' : '');
-  document.getElementById('statusMsg').textContent =
-    'Sending result' + (studentEmail ? ' to ' + studentEmail : '') + '…';
-  document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth' });
-  localStorage.setItem(STORAGE_KEY, '1');
+  document.getElementById('resultsPanel').style.display='block';
+  document.getElementById('finalScore').textContent=score+'/30';
+  const badge=document.getElementById('gradeBandBadge');
+  badge.textContent=band;badge.className='grade-band '+bc;
+  document.getElementById('resultMeta').textContent=
+    score+' out of 30 · '+pct+'% · Time: '+Math.floor(timeTaken/60)+'m '+(timeTaken%60)+'s'+(auto?' (auto-submitted)':'');
+  document.getElementById('statusMsg').textContent='Saving your result…';
+  document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth'});
+  localStorage.setItem(STORAGE_KEY,'1');
 
-  const perQ = {};
-  QUESTIONS.forEach((q, qi) => {
-    perQ['Q' + q.num + '_chosen']  = results[qi].chosen.join(',');
-    perQ['Q' + q.num + '_correct'] = q.c.join(',');
+  // Build payload
+  const perQ={};
+  QUESTIONS.forEach((q,qi)=>{
+    perQ['Q'+q.num+'_chosen']=results[qi].chosen.join(',');
+    perQ['Q'+q.num+'_correct']=q.c.join(',');
   });
+  const payload={
+    action:'submitQuiz',quiz:'fullsyllabus',
+    studentName,email:studentEmail,
+    totalScore:score,percentage:pct,gradeBand:band,
+    timeTaken,autoSubmit:auto?'Yes':'No',...perQ
+  };
 
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'submitQuiz', quiz: 'fullsyllabus',
-      studentName, email: studentEmail,
-      totalScore: score, percentage: pct, gradeBand: band,
-      timeTaken, autoSubmit: auto ? 'Yes' : 'No', ...perQ
-    }),
-    headers: { 'Content-Type': 'application/json' }
+  // ── KEY FIX: send as plain text, NO Content-Type header ──
+  // This avoids CORS preflight which blocks Apps Script POST
+  fetch(SCRIPT_URL,{
+    method:'POST',
+    body:JSON.stringify(payload)
+    // deliberately NO headers: {...} here
   })
-    .then(r => r.json())
-    .then(d => {
-      let msg = '✓ Your result has been recorded.';
-      if (d.emailSent === 'Yes') msg += ' Feedback emailed to ' + studentEmail + '.';
-      document.getElementById('statusMsg').textContent = msg;
-    })
-    .catch(() => {
-      document.getElementById('statusMsg').textContent =
-        '⚠ Could not reach server. Please inform your instructor.';
-    });
+  .then(r=>r.text())
+  .then(txt=>{
+    try{
+      const d=JSON.parse(txt);
+      let msg='✓ Your result has been recorded.';
+      if(d.emailSent==='Yes')msg+=' Feedback emailed to '+studentEmail+'.';
+      document.getElementById('statusMsg').textContent=msg;
+    } catch(e){
+      document.getElementById('statusMsg').textContent='✓ Result submitted.';
+    }
+  })
+  .catch(()=>{
+    document.getElementById('statusMsg').textContent='⚠ Could not reach server. Please inform your instructor.';
+  });
 }
 </script>
 </body>
