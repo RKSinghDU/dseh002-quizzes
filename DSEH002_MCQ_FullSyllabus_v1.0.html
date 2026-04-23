@@ -27,7 +27,6 @@ input:focus{border-color:var(--saf)}
 .btn{display:block;width:100%;margin-top:1.2rem;background:var(--saf);color:#fff;border:none;border-radius:4px;padding:.78rem;font-size:.92rem;font-family:'DM Mono',monospace;cursor:pointer;transition:background .2s}
 .btn:hover{background:var(--safl)}.btn:disabled{background:#ccc;cursor:not-allowed}
 .err{color:var(--red);font-size:.8rem;margin-top:.4rem;display:none}
-/* instructions */
 .instr{max-width:820px;margin:1.8rem auto 0;padding:0 1.2rem}
 .ibox{background:var(--cream);border:1px solid var(--bdr);border-left:4px solid var(--saf);border-radius:0 6px 6px 0;padding:1.4rem 1.6rem;box-shadow:var(--shd)}
 .ibox h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--saf);margin-bottom:.7rem}
@@ -39,7 +38,6 @@ input:focus{border-color:var(--saf)}
 .sc .v{font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:500;margin-bottom:.2rem}
 .sc.g .v{color:var(--grn)}.sc.r .v{color:var(--red)}.sc.a .v{color:var(--amb)}
 .sc .l{font-size:.72rem;color:rgba(26,20,16,.6)}
-/* quiz */
 .qwrap{max-width:820px;margin:1.6rem auto 0;padding:0 1.2rem}
 .qcard{background:var(--cream);border:1px solid var(--bdr);border-radius:6px;padding:1.6rem 1.8rem;margin-bottom:1.2rem;box-shadow:var(--shd);animation:si .3s ease both}
 @keyframes si{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -57,11 +55,10 @@ input:focus{border-color:var(--saf)}
 .subrow{text-align:center;margin:1.8rem 0 1rem}
 .subbtn{font-family:'DM Mono',monospace;font-size:.88rem;letter-spacing:.07em;text-transform:uppercase;background:var(--ink);color:var(--cream);border:none;border-radius:4px;padding:.85rem 2.8rem;cursor:pointer;transition:background .2s}
 .subbtn:hover{background:var(--saf)}
-/* results */
 .rwrap{max-width:820px;margin:2rem auto;padding:0 1.2rem;display:none}
 .rcard{background:var(--cream);border:1px solid var(--bdr);border-radius:6px;padding:2.2rem 2rem;box-shadow:var(--shd);text-align:center}
 .rcard h2{font-family:'Playfair Display',serif;font-size:1.7rem;margin-bottom:.4rem}
-.sc-disp{font-family:'DM Mono',monospace;font-size:2.8rem;font-weight:500;color:var(--saf);margin:.9rem 0}
+.scd{font-family:'DM Mono',monospace;font-size:2.8rem;font-weight:500;color:var(--saf);margin:.9rem 0}
 .gb{display:inline-block;font-family:'DM Mono',monospace;font-size:.82rem;letter-spacing:.09em;border-radius:3px;padding:.3rem 1.1rem;margin-bottom:1rem}
 .gO{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
 .gA{background:#cce5ff;color:#004085;border:1px solid #b8daff}
@@ -74,23 +71,17 @@ footer{text-align:center;padding:1.6rem 1.5rem;font-size:.74rem;color:rgba(26,20
 </style>
 </head>
 <body>
-
 <header>
   <div class="ey">DSEH002 · Full Syllabus Quiz</div>
   <h1>Organizational Development<br>&amp; Change Management</h1>
   <div class="sub">University of Delhi · Dept of Commerce · Prof R K Singh · Private Circulation</div>
   <div class="chips">
-    <span class="chip">15 Questions</span>
-    <span class="chip">30 Marks</span>
-    <span class="chip">Multiple Correct</span>
-    <span class="chip">Normalised Scoring</span>
+    <span class="chip">15 Questions</span><span class="chip">30 Marks</span>
+    <span class="chip">Multiple Correct</span><span class="chip">Normalised Scoring</span>
     <span class="chip">15 Minutes</span>
   </div>
 </header>
-
 <div class="tbar" id="tbar">⏱ Time remaining: <span id="tdisp">15:00</span></div>
-
-<!-- ENTRY SCREEN -->
 <div class="wrap" id="entry">
   <div class="card">
     <h2>Begin Assessment</h2>
@@ -100,11 +91,9 @@ footer{text-align:center;padding:1.6rem 1.5rem;font-size:.74rem;color:rgba(26,20
     <label class="lbl">Email Address</label>
     <input type="email" id="iemail" placeholder="yourname@example.com" autocomplete="email"/>
     <p id="err" class="err"></p>
-    <button class="btn" id="startbtn" onclick="start()">Begin Quiz →</button>
+    <button class="btn" id="startbtn" onclick="go()">Begin Quiz →</button>
   </div>
 </div>
-
-<!-- INSTRUCTIONS -->
 <div class="instr" id="instr" style="display:none">
   <div class="ibox">
     <h3>How Marks Are Calculated</h3>
@@ -117,39 +106,28 @@ footer{text-align:center;padding:1.6rem 1.5rem;font-size:.74rem;color:rgba(26,20
     <p style="font-size:.78rem;color:rgba(26,20,16,.55);margin-top:.5rem"><strong>k = 2 ÷ (number of correct options)</strong>. Score per question floored at zero.</p>
   </div>
 </div>
-
-<!-- QUIZ BODY -->
 <div class="qwrap" id="qbody" style="display:none"></div>
-
 <div class="subrow" id="subrow" style="display:none">
-  <button class="subbtn" onclick="submit()">Submit Assessment</button>
+  <button class="subbtn" onclick="sub()">Submit Assessment</button>
 </div>
-
-<!-- RESULTS -->
 <div class="rwrap" id="rwrap">
   <div class="rcard">
     <h2>Assessment Complete</h2>
-    <div class="sc-disp" id="fscore">—</div>
+    <div class="scd" id="fscore">—</div>
     <div class="gb" id="fband">—</div>
     <div class="rmeta" id="fmeta">—</div>
     <div class="smsg" id="fmsg">Saving result…</div>
   </div>
 </div>
-
 <footer>
   DSEH002 — Organizational Development and Change Management<br>
   Department of Commerce, University of Delhi · Prof R K Singh<br>
   For private circulation to DSEH002 class only · © 2026
 </footer>
-
 <script>
-// ── CONFIG ──────────────────────────────────────────────────────
-var LOGGER_URL = 'https://script.google.com/macros/s/AKfycbwdKzg4KDxohvhyYEQOPjoSKo4wS7KgPvioRnlpUill2VI8rZMFGN2ndgT-CwCf_q0FWA/exec';
-var DURATION   = 15 * 60;
-var STORE_KEY  = 'dseh002_fs_v1';
-
-// ── QUESTIONS ───────────────────────────────────────────────────
-var QS = [
+var LOGGER_URL='https://script.google.com/macros/s/AKfycbwWVaHBwvK8DrsAvaYxobjeD70Q7vQgWBPGULCdt5IEdyhmxJBTHoK0Cxz2hIPiGqIJNg/exec';
+var DUR=15*60, KEY='dseh002_fs_v1';
+var QS=[
 {n:1,t:'OD Foundations',q:'Which of the following accurately describe the philosophical and methodological foundations of Organizational Development (OD)?',o:['OD is grounded in humanistic values emphasising human dignity, equality, and democratic participation.','Action research — a cyclical process of diagnosis, intervention, and evaluation — is a defining OD methodology.','OD operates exclusively at the individual level and does not address system-level dynamics.','OD emerged primarily from industrial engineering and treats human behaviour as a variable to be optimised.','Gandhian Trusteeship anticipates OD\'s stakeholder orientation by positioning leaders as stewards of collective wellbeing.','Planned change at the organisation-wide level, guided by a change agent, is a hallmark of OD.','OD is a one-time event rather than an iterative, data-driven process.'],c:[0,1,4,5]},
 {n:2,t:'Force Field Analysis',q:'A manufacturing firm has high burnout. Which of the following are restraining forces preventing burnout reduction (Lewin\'s Force Field Analysis)?',o:['A cultural norm equating long hours with commitment and loyalty.','An active Works Committee that regularly raises wellbeing concerns.','Absence of structured voice mechanisms for employees to report stress.','Skill gaps that inflate perceived workload.','A new mandatory mindfulness programme across all departments.','Middle management resistance to redistributing workloads due to performance targets.','External trade union advocacy demanding occupational health audits.'],c:[0,2,3,5]},
 {n:3,t:'Schein — Three Models',q:'Which statements correctly characterise Schein\'s Process Consultation model and distinguish it from the Expert and Doctor-Patient models?',o:['The consultant helps the client develop their own diagnostic capability rather than providing solutions.','The consultant diagnoses unilaterally and prescribes treatment without client involvement.','The relationship is genuinely collaborative — the client owns the problem throughout.','Process consultation strengthens the client\'s long-term self-sufficiency and change capacity.','The client passively receives expert analysis, as in a medical consultation.','Effective process consultation requires the consultant to be the sole repository of OD expertise.','The consultant\'s primary role is facilitating reflection and joint problem-solving, not delivering answers.'],c:[0,2,3,6]},
@@ -166,16 +144,9 @@ var QS = [
 {n:14,t:'Cummings & Worley Taxonomy',q:'Which correctly illustrate Cummings & Worley\'s four-category OD intervention taxonomy?',o:['Human process interventions include process consultation, team building, conflict resolution, and Open Space Technology.','Technostructural interventions include job design (JCM), work restructuring, quality circles, and STS redesign.','Survey feedback is a strategic intervention because it has organisation-wide impact.','HRM interventions include performance management, reward redesign, career development, and diversity initiatives.','Strategic interventions include culture change, M&A integration, and alliances.','Appreciative Inquiry is a technostructural intervention because it restructures processes.','Work redesign using the JCM is a technostructural intervention targeting individual job structure.'],c:[0,1,3,4,6]},
 {n:15,t:'Gandhian OD Principles',q:'Which statements accurately connect Gandhian principles to OD theory and practice, including chronological positioning?',o:['Satyagraha provides an ethical foundation for OD — including courageous diagnostic feedback — predating Lewin\'s work.','Sarvodaya anticipates stakeholder theory by decades, requiring interventions to benefit all, not just dominant stakeholders.','Gandhian principles were derived from Western scientific management and are supplementary to OD.','Trusteeship positions leaders as stewards holding resources on behalf of all stakeholders — anticipating servant leadership.','Non-violence (Ahimsa) has no relevance to organisational conflict resolution.','Gram Swarajya reflects decentralisation and grassroots empowerment central to participative OD.','Vedantic systems thinking — interconnectedness (Atman-Brahman) — predates Open Systems Theory (1950s).'],c:[0,1,3,5,6]}
 ];
-
-// ── STATE ────────────────────────────────────────────────────────
-var sname='', semail='', tleft=DURATION, tiv=null, done=false;
-
-// ── INIT ─────────────────────────────────────────────────────────
-window.onload = function(){
-  if(localStorage.getItem(STORE_KEY)){ alreadyDone(); }
-};
-
-function alreadyDone(){
+var sname='',semail='',tleft=DUR,tiv=null,done=false;
+window.onload=function(){if(localStorage.getItem(KEY)){already();}};
+function already(){
   document.getElementById('entry').style.display='none';
   document.getElementById('rwrap').style.display='block';
   document.getElementById('fscore').textContent='—';
@@ -184,133 +155,89 @@ function alreadyDone(){
   document.getElementById('fmeta').textContent='You have already submitted this assessment.';
   document.getElementById('fmsg').textContent='Each student may attempt this quiz only once.';
 }
-
-// ── START ────────────────────────────────────────────────────────
-function start(){
-  var n = document.getElementById('iname').value.trim();
-  var e = document.getElementById('iemail').value.trim();
-  var er= document.getElementById('err');
-  if(n.length < 3){ er.textContent='Please enter your full name.'; er.style.display='block'; return; }
-  if(!e || !e.includes('@')){ er.textContent='Please enter a valid email address.'; er.style.display='block'; return; }
+function go(){
+  var n=document.getElementById('iname').value.trim();
+  var e=document.getElementById('iemail').value.trim();
+  var er=document.getElementById('err');
+  if(n.length<3){er.textContent='Please enter your full name.';er.style.display='block';return;}
+  if(!e||!e.includes('@')){er.textContent='Please enter a valid email address.';er.style.display='block';return;}
   er.style.display='none';
-  sname=n; semail=e;
+  sname=n;semail=e;
   document.getElementById('entry').style.display='none';
   document.getElementById('instr').style.display='block';
   document.getElementById('qbody').style.display='block';
   document.getElementById('subrow').style.display='block';
-  buildQuiz();
-  startTimer();
+  build();tick();
 }
-
-// ── BUILD QUIZ ───────────────────────────────────────────────────
-function buildQuiz(){
-  var w=document.getElementById('qbody'); w.innerHTML='';
+function build(){
+  var w=document.getElementById('qbody');w.innerHTML='';
   QS.forEach(function(q,qi){
-    var d=document.createElement('div'); d.className='qcard';
-    d.style.animationDelay=(qi*.04)+'s';
-    var opts=q.o.map(function(o,oi){
-      return '<label class="ol" id="lb_'+qi+'_'+oi+'"><input type="checkbox" id="op_'+qi+'_'+oi+'"/><span>'+o+'</span></label>';
-    }).join('');
-    d.innerHTML='<div class="qh"><span class="qn">Q'+q.n+'</span><span class="qt">'+q.t+'</span></div><div class="qtxt">'+q.q+'</div><div class="opts">'+opts+'</div>';
+    var d=document.createElement('div');d.className='qcard';d.style.animationDelay=(qi*.04)+'s';
+    d.innerHTML='<div class="qh"><span class="qn">Q'+q.n+'</span><span class="qt">'+q.t+'</span></div><div class="qtxt">'+q.q+'</div><div class="opts">'+q.o.map(function(o,oi){return'<label class="ol" id="lb_'+qi+'_'+oi+'"><input type="checkbox" id="op_'+qi+'_'+oi+'"/><span>'+o+'</span></label>';}).join('')+'</div>';
     w.appendChild(d);
   });
 }
-
-// ── TIMER ────────────────────────────────────────────────────────
-function startTimer(){
-  var bar=document.getElementById('tbar'), dp=document.getElementById('tdisp');
+function tick(){
+  var bar=document.getElementById('tbar'),dp=document.getElementById('tdisp');
   bar.classList.add('on');
   tiv=setInterval(function(){
     tleft--;
-    var m=Math.floor(tleft/60), s=tleft%60;
+    var m=Math.floor(tleft/60),s=tleft%60;
     dp.textContent=m+':'+(s<10?'0':'')+s;
-    if(tleft<=120) bar.classList.add('warn');
-    if(tleft<=0){ clearInterval(tiv); submit(true); }
+    if(tleft<=120)bar.classList.add('warn');
+    if(tleft<=0){clearInterval(tiv);sub(true);}
   },1000);
 }
-
-// ── SCORE ────────────────────────────────────────────────────────
-function score(){
-  var total=0, res=[];
+function calc(){
+  var tot=0,res=[];
   QS.forEach(function(q,qi){
-    var k=2/q.c.length, ch=[];
-    q.o.forEach(function(_,oi){ if(document.getElementById('op_'+qi+'_'+oi) && document.getElementById('op_'+qi+'_'+oi).checked) ch.push(oi); });
+    var k=2/q.c.length,ch=[];
+    q.o.forEach(function(_,oi){var el=document.getElementById('op_'+qi+'_'+oi);if(el&&el.checked)ch.push(oi);});
     var raw=0;
-    ch.forEach(function(oi){ raw+=q.c.indexOf(oi)>=0?k:-k; });
-    q.c.forEach(function(ci){ if(ch.indexOf(ci)<0) raw-=k; });
-    raw=Math.max(0,raw); total+=raw; res.push({ch:ch});
+    ch.forEach(function(oi){raw+=q.c.indexOf(oi)>=0?k:-k;});
+    q.c.forEach(function(ci){if(ch.indexOf(ci)<0)raw-=k;});
+    raw=Math.max(0,raw);tot+=raw;res.push({ch:ch});
   });
-  return{sc:Math.round(total*10)/10, res:res};
+  return{sc:Math.round(tot*10)/10,res:res};
 }
-
-// ── SUBMIT ───────────────────────────────────────────────────────
-function submit(auto){
-  if(done) return; done=true; auto=auto||false;
+function sub(auto){
+  if(done)return;done=true;auto=auto||false;
   clearInterval(tiv);
   document.getElementById('tbar').style.display='none';
   document.getElementById('subrow').style.display='none';
-
-  var r=score(), sc=r.sc, res=r.res;
-  var pct=Math.round(sc/30*100), tt=DURATION-tleft;
-
-  // colour options
+  var r=calc(),sc=r.sc,res=r.res;
+  var pct=Math.round(sc/30*100),tt=DUR-tleft;
   QS.forEach(function(q,qi){
     q.o.forEach(function(_,oi){
-      var lb=document.getElementById('lb_'+qi+'_'+oi), ip=document.getElementById('op_'+qi+'_'+oi);
-      if(!lb||!ip) return; ip.disabled=true;
-      var ch=res[qi].ch.indexOf(oi)>=0, cr=q.c.indexOf(oi)>=0;
-      if(ch&&cr) lb.classList.add('cc');
-      else if(ch&&!cr) lb.classList.add('wc');
-      else if(!ch&&cr) lb.classList.add('mc');
+      var lb=document.getElementById('lb_'+qi+'_'+oi),ip=document.getElementById('op_'+qi+'_'+oi);
+      if(!lb||!ip)return;ip.disabled=true;
+      var ch=res[qi].ch.indexOf(oi)>=0,cr=q.c.indexOf(oi)>=0;
+      if(ch&&cr)lb.classList.add('cc');
+      else if(ch&&!cr)lb.classList.add('wc');
+      else if(!ch&&cr)lb.classList.add('mc');
     });
   });
-
-  var band, bc;
+  var band,bc;
   if(pct>=85){band='O — Outstanding';bc='gO';}
   else if(pct>=70){band='A — Excellent';bc='gA';}
   else if(pct>=55){band='B — Satisfactory';bc='gB';}
   else{band='C — Needs Development';bc='gC';}
-
   document.getElementById('rwrap').style.display='block';
   document.getElementById('fscore').textContent=sc+'/30';
-  var fb=document.getElementById('fband'); fb.textContent=band; fb.className='gb '+bc;
+  var fb=document.getElementById('fband');fb.textContent=band;fb.className='gb '+bc;
   document.getElementById('fmeta').textContent=sc+' / 30  ·  '+pct+'%  ·  Time: '+Math.floor(tt/60)+'m '+(tt%60)+'s'+(auto?' (auto-submitted)':'');
   document.getElementById('fmsg').textContent='Saving result…';
   document.getElementById('rwrap').scrollIntoView({behavior:'smooth'});
-  localStorage.setItem(STORE_KEY,'1');
-
-  // Build payload — COMC004 style (no Content-Type header = no CORS preflight)
-  var payload = {
-    quiz:       'DSEH002_FullSyllabus',
-    name:       sname,
-    email:      semail,
-    score:      sc,
-    max:        30,
-    pct:        pct,
-    gradeBand:  band,
-    timeTaken:  tt,
-    autoSubmit: auto ? 'Yes' : 'No'
-  };
-  QS.forEach(function(q,qi){
-    payload['Q'+q.n+'_chosen']  = res[qi].ch.join(',');
-    payload['Q'+q.n+'_correct'] = q.c.join(',');
-  });
-
-  fetch(LOGGER_URL, { method:'POST', body: JSON.stringify(payload) })
-    .then(function(r){ return r.text(); })
+  localStorage.setItem(KEY,'1');
+  var payload={quiz:'DSEH002_FullSyllabus',name:sname,email:semail,score:sc,max:30,pct:pct,gradeBand:band,timeTaken:tt,autoSubmit:auto?'Yes':'No'};
+  QS.forEach(function(q,qi){payload['Q'+q.n+'_chosen']=res[qi].ch.join(',');payload['Q'+q.n+'_correct']=q.c.join(',');});
+  fetch(LOGGER_URL,{method:'POST',body:JSON.stringify(payload)})
+    .then(function(r){return r.text();})
     .then(function(t){
-      try{
-        var d=JSON.parse(t);
-        var msg='✓ Result recorded.';
-        if(d.emailSent==='Yes') msg+=' Feedback emailed to '+semail+'.';
-        document.getElementById('fmsg').textContent=msg;
-      }catch(e){
-        document.getElementById('fmsg').textContent='✓ Result submitted.';
-      }
+      try{var d=JSON.parse(t);var m='✓ Result recorded.';if(d.emailSent==='Yes')m+=' Feedback emailed to '+semail+'.';document.getElementById('fmsg').textContent=m;}
+      catch(e){document.getElementById('fmsg').textContent='✓ Result submitted.';}
     })
-    .catch(function(){
-      document.getElementById('fmsg').textContent='⚠ Could not reach server. Inform your instructor.';
-    });
+    .catch(function(){document.getElementById('fmsg').textContent='⚠ Could not reach server. Inform your instructor.';});
 }
 </script>
 </body>
